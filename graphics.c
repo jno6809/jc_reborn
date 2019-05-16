@@ -13,6 +13,8 @@ static SDL_Window *sdl_window;
 
 static uint8 ttmPalette[16][4];
 
+static SDL_Surface *grSavedLayer    = NULL;
+
 SDL_Surface *grBackgroundSfc = NULL;
 
 int grDx = 0;
@@ -80,6 +82,14 @@ void graphicsUpdate(struct TTtmThread *ttmBackgroundThread,
                         SDL_GetWindowSurface(sdl_window),
                         NULL);
 
+    // If not NULL, blit the optional layer of saved zones
+    if (grSavedLayer != NULL)
+        SDL_BlitSurface(grSavedLayer,
+                        NULL,
+                        SDL_GetWindowSurface(sdl_window),
+                        NULL);
+
+
     // Blit successively each thread's layer
     for (int i=0; i < MAX_TTM_THREADS; i++)
         if (ttmThreads[i].isRunning)
@@ -130,7 +140,11 @@ void grSaveImage0(SDL_Surface *sfc, uint16 x, uint16 y, uint16 width, uint16 hei
 {
     x += grDx; y += grDy;
     SDL_Rect rect = { (short) x, (short) y, width + 2, height };
-    SDL_BlitSurface(sfc, &rect, grBackgroundSfc, &rect);
+
+    if (grSavedLayer == NULL)
+        grSavedLayer = grNewLayer();
+
+    SDL_BlitSurface(sfc, &rect, grSavedLayer, &rect);
 
     // Note : without the +2 in width+2 above, there would be a graphical
     // glitch (2 unfilled pixels) on the hull of the cargo, caused by an
@@ -387,10 +401,20 @@ static void grReleaseScreen()
 }
 
 
+static void grReleaseSavedLayer()
+{
+    SDL_FreeSurface(grSavedLayer);
+    grSavedLayer = NULL;
+}
+
+
 void grLoadScreen(char *strArg)
 {
     if (grBackgroundSfc != NULL)
         grReleaseScreen();
+
+    if (grSavedLayer != NULL)
+        grReleaseSavedLayer();
 
     struct TScrResource *scrResource = findScrResource(strArg);
 
@@ -425,6 +449,9 @@ void grInitEmptyBackground()
 {
     if (grBackgroundSfc != NULL)
         grReleaseScreen();
+
+    if (grSavedLayer != NULL)
+        grReleaseSavedLayer();
 
     uint8 *data = safe_malloc(640 * 480 * sizeof(uint32));
     memset(data, 0, 640 * 480 * sizeof(uint32));

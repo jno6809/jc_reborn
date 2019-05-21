@@ -6,7 +6,8 @@
 void benchInit(struct TTtmSlot *ttmSlot)
 {
     grLoadScreen("OCEAN00.SCR");
-    grLoadBmp(ttmSlot,0,"BOAT.BMP");
+
+    grLoadBmp(ttmSlot, 0, "BOAT.BMP");
 }
 
 

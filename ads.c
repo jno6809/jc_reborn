@@ -635,14 +635,22 @@ void adsPlayBench()  // TODO - tempo
     uint32 startTicks, counter;
 
     adsInit();
+
+    for (int i=0; i < 8; i++) {
+        ttmThreads[i].ttmSlot         = &ttmSlots[0];;
+        ttmThreads[i].isRunning       = 1;
+        ttmThreads[i].selectedBmpSlot = 0;
+        ttmThreads[i].ttmLayer        = grNewLayer();
+    }
+
     benchInit(ttmSlots);
 
     for (int j=0; j < 3 ; j++) {
 
         int numLayers = numsLayers[j];
 
-        for (int i=0; i < numLayers; i++)
-            adsAddScene(0,0,0);
+        for (int i=0; i < MAX_TTM_THREADS; i++)
+            ttmThreads[i].isRunning = (i<numLayers ? 1 : 0);
 
         startTicks = SDL_GetTicks();
         counter = 0;
@@ -657,11 +665,10 @@ void adsPlayBench()  // TODO - tempo
             counter++;
         }
 
-        adsStopAllScenes();
-
         printf(" %d-layers test --> %ld fps\n", numLayers, counter/3);
     }
 
+    adsStopAllScenes();
     ttmResetSlot(ttmSlots);
 }
 

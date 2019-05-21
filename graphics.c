@@ -55,7 +55,9 @@ void graphicsInit(int fullScreen)
         exit(1);
     }
 
-    SDL_ShowCursor(SDL_DISABLE);
+    if (fullScreen)
+        SDL_ShowCursor(SDL_DISABLE);
+
     SDL_UpdateWindowSurface(sdl_window);
 
     grLoadPalette(palResources[0]);  // TODO ?

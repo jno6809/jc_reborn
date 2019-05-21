@@ -52,6 +52,7 @@ extern int grDy;
 
 void graphicsInit(int fullScreen);
 void graphicsEnd();
+void graphicsRefreshWindow();
 void graphicsUpdate(struct TTtmThread *ttmBackgroundThread,
                     struct TTtmThread *ttmThreads,
                     struct TTtmThread *ttmHolidayThreads);

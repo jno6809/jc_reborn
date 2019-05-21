@@ -70,6 +70,11 @@ void graphicsEnd()
     SDL_Quit();
 }
 
+void graphicsRefreshWindow()
+{
+    SDL_UpdateWindowSurface(sdl_window);
+}
+
 
 void graphicsUpdate(struct TTtmThread *ttmBackgroundThread,
                     struct TTtmThread *ttmThreads,

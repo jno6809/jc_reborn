@@ -154,7 +154,7 @@ static void adsAddScene(uint16 ttmSlotNo, uint16 ttmTag, uint16 arg3)
 
         struct TTtmThread *ttmThread = &ttmThreads[i];
 
-        if (ttmThread->isRunning) {
+        if (ttmThread->isRunning == 1) {
 
             if (ttmThread->sceneSlot == ttmSlotNo && ttmThread->sceneTag == ttmTag) {
                 debugMsg("(%d,%d) thread is already running - didn't add extra one\n", ttmSlotNo, ttmTag);
@@ -176,7 +176,7 @@ static void adsAddScene(uint16 ttmSlotNo, uint16 ttmTag, uint16 arg3)
     ttmThread->sceneTag        = ttmTag;
     ttmThread->sceneTimer      = 0;
     ttmThread->sceneIterations = 0;
-    ttmThread->delay           = 2;
+    ttmThread->delay           = 4;
     ttmThread->timer           = 0;
     ttmThread->nextGotoOffset  = 0;
     ttmThread->selectedBmpSlot = 0;

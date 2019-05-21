@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int main() 
+int main()
 {
     FILE *f;
     unsigned short data[4];
@@ -22,10 +22,10 @@ int main()
 
 //        printf("%06lx %04x %04x %04x  %04d %04d %04d ",
 //            a,
-//            data[0], data[1], data[2], 
+//            data[0], data[1], data[2],
 //            data[0], data[1], data[2]);
 
-        printf("    { %d, %3d, %3d, %2d },\n", 
+        printf("    { %d, %3d, %3d, %2d },\n",
             data[0] >> 15,
             data[1],
             data[2],

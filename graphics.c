@@ -154,7 +154,7 @@ void grSaveImage0(SDL_Surface *sfc, uint16 x, uint16 y, uint16 width, uint16 hei
     // Note : without the +2 in width+2 above, there would be a graphical
     // glitch (2 unfilled pixels) on the hull of the cargo, caused by an
     // error in coordinates in GJIVS6.TTM
-    // Obviously, the original soft rounds the SAVE_IMAGE boundaries on 
+    // Obviously, the original soft rounds the SAVE_IMAGE boundaries on
     // one way or another.
 }
 

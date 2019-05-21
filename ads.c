@@ -162,7 +162,7 @@ static void adsAddScene(uint16 ttmSlotNo, uint16 ttmTag, uint16 arg3)
             }
         }
     }
-    
+
     int i=0;
 
     while (ttmThreads[i].isRunning)
@@ -470,7 +470,7 @@ static void adsPlayTriggeredChunks(uint8 *data, uint32 dataSize, uint16 ttmSlotN
     // Note : in a few rare cases (eg BUILDING.ADS tag2), the ADS script
     // contains several 'IF_LASTPLAYED' commands for one given scene.
 
-    for (int i=0; i < numAdsChunks; i++) 
+    for (int i=0; i < numAdsChunks; i++)
         if (adsChunks[i].scene.slot == ttmSlotNo && adsChunks[i].scene.tag == ttmTag)
             adsPlayChunk(data, dataSize, adsChunks[i].offset);
 }

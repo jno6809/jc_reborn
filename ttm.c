@@ -7,6 +7,20 @@
 #include "ttm.h"
 
 
+static uint32 ttmFindPreviousTag(struct TTtmSlot *ttmSlot, uint32 offset)
+{
+    uint32 result = 0;
+    int i = 0;
+
+    while (ttmSlot->tags[i].offset < offset) {
+        result = ttmSlot->tags[i].offset;
+        i++;
+    }
+
+    return result;
+}
+
+
 uint32 ttmFindTag(struct TTtmSlot *ttmSlot, uint16 reqdTag)
 {
     uint32 result = 0;
@@ -140,7 +154,10 @@ void ttmPlay(struct TTtmThread *ttmThread)     // TODO
 
             case 0x0110:
                 debugMsg("    PURGE");
-                ttmThread->isRunning = 2;
+                if (ttmThread->sceneTimer)
+                    ttmThread->nextGotoOffset = ttmFindPreviousTag(ttmSlot, offset);
+                else
+                    ttmThread->isRunning = 2;
                 break;
 
             case 0x0FF0:

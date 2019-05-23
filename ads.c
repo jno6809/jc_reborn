@@ -14,8 +14,9 @@
 #include "bench.h"
 #include "ads.h"
 
-#define MAX_RANDOM_SCENES  10
-#define MAX_ADS_CHUNKS     100
+#define MAX_RANDOM_SCENES     10
+#define MAX_ADS_CHUNKS        100
+#define MAX_ADS_CHUNKS_LOCAL  1
 
 
 struct TAdsChunk {   // TODO should not be here
@@ -26,6 +27,9 @@ struct TAdsChunk {   // TODO should not be here
 
 static struct TAdsChunk adsChunks[MAX_ADS_CHUNKS];
 static int    numAdsChunks;
+
+static struct TAdsChunk adsChunksLocal[MAX_ADS_CHUNKS_LOCAL];
+static int    numAdsChunksLocal;
 
 static struct TTtmSlot ttmBackgroundSlot;
 static struct TTtmSlot ttmHolidaySlot;
@@ -53,10 +57,11 @@ static void adsLoad(uint8 *data, uint32 dataSize, uint16 numTags, uint16 tag, ui
     uint16 args[10];
     int bookmarkingChunks = 0;
 
-    numAdsChunks = 0;
-    *tagOffset   = 0;
-    adsNumTags   = 0;
-    adsTags = safe_malloc(numTags * sizeof(struct TTtmTag));
+    numAdsChunks      = 0;
+    numAdsChunksLocal = 0;
+    *tagOffset        = 0;
+    adsNumTags        = 0;
+    adsTags           = safe_malloc(numTags * sizeof(struct TTtmTag));
 
     while (offset < dataSize) {
 
@@ -318,10 +323,11 @@ static void adsPlayChunk(uint8 *data, uint32 dataSize, uint32 offset)
 {
     uint16 opcode;
     uint16 args[10];
-    int inRandBlock   = 0;
-    int inOrBlock     = 0;
-    int inSkipBlock   = 0;
-    int continueLoop  = 1;
+    int inRandBlock          = 0;
+    int inOrBlock            = 0;
+    int inSkipBlock          = 0;
+    int inIfLastplayedLocal  = 0;
+    int continueLoop         = 1;
 
 
     while (continueLoop && offset < dataSize) {
@@ -331,12 +337,19 @@ static void adsPlayChunk(uint8 *data, uint32 dataSize, uint32 offset)
         switch (opcode) {
 
             case 0x1070:
+                // Inside a RANDOM block, IF_LASTPLAYED which overrides
+                // the global IF_LASTPLAYEDs.
                 peekUint16Block(data, &offset, args, 2);
-                debugMsg("UNKNOWN_0");
+                debugMsg("IF_LASTPLAYED_LOCAL");
+                inIfLastplayedLocal = 1;
+                adsChunksLocal[numAdsChunksLocal].scene.slot = args[0];
+                adsChunksLocal[numAdsChunksLocal].scene.tag  = args[1];
+                adsChunksLocal[numAdsChunksLocal].offset     = offset;
+                numAdsChunksLocal++;
                 break;
 
             case 0x1330:
-                // always just before a call to ADD_SCENE with same (ttm,tag)
+                // Always just before a call to ADD_SCENE with same (ttm,tag)
                 // references tags which init commands : LOAD_IMAGE LOAD_SCREEN etc.
                 //   - one exception: FISHING.ADS tag 3
                 //   - seems to be a synonym of "IF_NOT_RUNNING"
@@ -369,7 +382,7 @@ static void adsPlayChunk(uint8 *data, uint32 dataSize, uint32 offset)
                 break;
 
             case 0x1420:
-                debugMsg("OR_UNKNOWN_3");
+                debugMsg("OR_UNKNOWN_3");  // the OR of IF_SKIP_NEXT_2
                 break;
 
             case 0x1430:
@@ -386,8 +399,19 @@ static void adsPlayChunk(uint8 *data, uint32 dataSize, uint32 offset)
                 break;
 
             case 0x1520:
+                // Only in ACTIVITY.ADS tag 7, after IF_LASTPLAYED_LOCAL
                 peekUint16Block(data, &offset, args, 5);
-                debugMsg("PLAY_SCENE_2");
+                debugMsg("ADD_SCENE_LOCAL");
+                if (inIfLastplayedLocal) {
+                    // First pass : the scene was queued by IF_LASTPLAYED_LOCAL,
+                    // nothing more to do for now
+                    inIfLastplayedLocal = 0;
+                }
+                else {
+                    // Second pass (we were called directly from the scheduler)
+                    // --> we launch the execution of the scene
+                    adsAddScene(args[1],args[2],args[3]);
+                }
                 break;
 
             case 0x2005:
@@ -416,6 +440,7 @@ static void adsPlayChunk(uint8 *data, uint32 dataSize, uint32 offset)
             case 0x3020:
                 peekUint16Block(data, &offset, args, 1);
                 debugMsg("RANDOM_UNKNOWN_0");   // cf. ACTIVITY.ADS:1 , = when swimming back to island
+                                                // associated to IF_SKIP_NEXT2 and OR_UNKNOWN_3
                 break;
 
             case 0x30ff:
@@ -467,12 +492,28 @@ static void adsPlayChunk(uint8 *data, uint32 dataSize, uint32 offset)
 
 static void adsPlayTriggeredChunks(uint8 *data, uint32 dataSize, uint16 ttmSlotNo, uint16 ttmTag)
 {
-    // Note : in a few rare cases (eg BUILDING.ADS tag2), the ADS script
-    // contains several 'IF_LASTPLAYED' commands for one given scene.
 
-    for (int i=0; i < numAdsChunks; i++)
-        if (adsChunks[i].scene.slot == ttmSlotNo && adsChunks[i].scene.tag == ttmTag)
-            adsPlayChunk(data, dataSize, adsChunks[i].offset);
+    // First we deal with the case where a local trigger was declared
+    // (only one occurence of this, in ACTIVITY.ADS tag #7)
+
+    if (numAdsChunksLocal) {
+        for (int i=0; i < numAdsChunksLocal; i++)
+            if (adsChunksLocal[i].scene.slot == ttmSlotNo && adsChunksLocal[i].scene.tag == ttmTag) {
+                adsPlayChunk(data, dataSize, adsChunksLocal[i].offset);
+                numAdsChunksLocal--;
+            }
+    }
+
+
+    // Then, the general case
+    else {
+        // Note : in a few rare cases (eg BUILDING.ADS tag #2), the ADS script
+        // contains several 'IF_LASTPLAYED' commands for one given scene.
+
+        for (int i=0; i < numAdsChunks; i++)
+            if (adsChunks[i].scene.slot == ttmSlotNo && adsChunks[i].scene.tag == ttmTag)
+                adsPlayChunk(data, dataSize, adsChunks[i].offset);
+    }
 }
 
 

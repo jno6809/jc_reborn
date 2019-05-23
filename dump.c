@@ -209,7 +209,7 @@ static void dumpAds(struct TAdsResource *adsResource)
         opcode = peekUint16(data, &offset);
 
         switch (opcode) {
-            case 0x1070: fprintf(fout, "UNKNOWN_0"); numArgs=2; break;
+            case 0x1070: fprintf(fout, "IF_LASTPLAYED_LOCAL"); numArgs=2; break;
             case 0x1330: fprintf(fout, "IF_UNKNOWN_1"); numArgs=2; break;
             case 0x1350: fprintf(fout, "IF_LASTPLAYED"); numArgs=2; break;
             case 0x1360: fprintf(fout, "IF_SKIP_NEXT2"); numArgs=2; break;
@@ -217,7 +217,7 @@ static void dumpAds(struct TAdsResource *adsResource)
             case 0x1420: fprintf(fout, "OR_UNKNOWN_3"); numArgs=0; break;
             case 0x1430: fprintf(fout, "OR"); numArgs=0; break;
             case 0x1510: fprintf(fout, "PLAY_SCENE"); numArgs=0; break;
-            case 0x1520: fprintf(fout, "PLAY_SCENE_2"); numArgs=5; break;
+            case 0x1520: fprintf(fout, "ADD_SCENE_LOCAL"); numArgs=5; break;
             case 0x2005: fprintf(fout, "ADD_SCENE"); numArgs=4; break;
             case 0x2010: fprintf(fout, "STOP_SCENE"); numArgs=3; break;
             case 0x2014: fprintf(fout, "UNKNOWN_5"); numArgs=0; break;
@@ -229,7 +229,7 @@ static void dumpAds(struct TAdsResource *adsResource)
             case 0xf200: fprintf(fout, "GOSUB_TAG"); numArgs=1; break;
             case 0xffff: fprintf(fout, "END"); numArgs=0; break;
             case 0xfff0: fprintf(fout, "END_IF"); numArgs=0; break;
-            default : fprintf(fout, "\n:TAG_%d ", opcode); numArgs=0; break;
+            default : fprintf(fout, "\n:TAG_%d", opcode); numArgs=0; break;
         }
 
         for (int b=0; b<numArgs; b++)

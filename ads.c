@@ -214,14 +214,6 @@ static void adsStopScene(int sceneNo)
 }
 
 
-static void adsStopAllScenes()
-{
-    for (int i=0; i < MAX_TTM_THREADS; i++)
-        if (ttmThreads[i].isRunning)
-            adsStopScene(i);
-}
-
-
 static void adsStopSceneByTtmTag(uint16 ttmSlotNo, uint16 ttmTag)
 {
     struct TTtmThread *ttmThread;
@@ -646,13 +638,8 @@ void adsPlay(char *adsName, uint16 adsTag)
                 // Free terminated threads
                 if (ttmThreads[i].isRunning == 2) {
 
-                    // END encountered ?
-                    if (adsStopRequested) {
-                        adsStopAllScenes();
-                    }
-
                     // Managing the numPlays which was indicated in ADD_SCENE arg3 (postive value)
-                    else if (ttmThreads[i].sceneIterations) {
+                    if (ttmThreads[i].sceneIterations) {
                         ttmThreads[i].sceneIterations--;
                         ttmThreads[i].isRunning = 1;
                         ttmThreads[i].ip = ttmFindTag(&ttmSlots[ttmThreads[i].sceneSlot], ttmThreads[i].sceneTag);
@@ -660,7 +647,9 @@ void adsPlay(char *adsName, uint16 adsTag)
 
                     // Is there one (or more) IF_LASTPLAYED matching the terminated thread ?
                     else {
-                        adsPlayTriggeredChunks(data, dataSize, ttmThreads[i].sceneSlot, ttmThreads[i].sceneTag);
+                        if (!adsStopRequested)
+                            adsPlayTriggeredChunks(data, dataSize, ttmThreads[i].sceneSlot, ttmThreads[i].sceneTag);
+
                         adsStopScene(i);
                     }
                 }
@@ -716,7 +705,9 @@ void adsPlayBench()  // TODO - tempo
         printf(" %d-layers test --> %ld fps\n", numLayers, counter/3);
     }
 
-    adsStopAllScenes();
+    for (int i=0; i < 8; i++)
+        adsStopScene(i);
+
     ttmResetSlot(ttmSlots);
 }
 

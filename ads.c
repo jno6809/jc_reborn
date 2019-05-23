@@ -402,6 +402,7 @@ static void adsPlayChunk(uint8 *data, uint32 dataSize, uint32 offset)
                 // Only in ACTIVITY.ADS tag 7, after IF_LASTPLAYED_LOCAL
                 peekUint16Block(data, &offset, args, 5);
                 debugMsg("ADD_SCENE_LOCAL");
+
                 if (inIfLastplayedLocal) {
                     // First pass : the scene was queued by IF_LASTPLAYED_LOCAL,
                     // nothing more to do for now
@@ -412,23 +413,29 @@ static void adsPlayChunk(uint8 *data, uint32 dataSize, uint32 offset)
                     // --> we launch the execution of the scene
                     adsAddScene(args[1],args[2],args[3]);
                 }
+
                 break;
 
             case 0x2005:
                 peekUint16Block(data, &offset, args, 4);
                 debugMsg("ADD_SCENE %d %d %d %d", args[0], args[1], args[2], args[3]);
 
-                if (inRandBlock)
-                    adsRandomAddScene(args[0],args[1]);
-                else if (!inSkipBlock)                // TODO - TEMPO
-                    adsAddScene(args[0],args[1],args[2]);
+                if (!inSkipBlock) {               // TODO - TEMPO
+                    if (inRandBlock)
+                        adsRandomAddScene(args[0],args[1]);
+                    else
+                        adsAddScene(args[0],args[1],args[2]);
+                }
 
                 break;
 
             case 0x2010:
                 peekUint16Block(data, &offset, args, 3);
                 debugMsg("STOP_SCENE %d %d %d", args[0], args[1], args[2]);
-                adsStopSceneByTtmTag(args[0], args[1]);
+
+                if (!inSkipBlock)                // TODO - TEMPO
+                    adsStopSceneByTtmTag(args[0], args[1]);
+
                 break;
 
             case 0x3010:

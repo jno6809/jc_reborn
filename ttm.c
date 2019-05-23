@@ -224,8 +224,8 @@ void ttmPlay(struct TTtmThread *ttmThread)     // TODO
                 break;
 
             case 0x4204:
-                debugMsg("    SAVE_IMAGE0 %d %d %d %d", args[0], args[1], args[2], args[3]);
-                grSaveImage0(ttmThread->ttmLayer, args[0], args[1], args[2], args[3]);
+                debugMsg("    COPY_ZONE_TO_BG %d %d %d %d", args[0], args[1], args[2], args[3]);
+                grCopyZoneToBg(ttmThread->ttmLayer, args[0], args[1], args[2], args[3]);
                 break;
 
             case 0x4214:
@@ -241,14 +241,14 @@ void ttmPlay(struct TTtmThread *ttmThread)     // TODO
 
             case 0xA054:
                 // only once, in GJGULIVR.TTM.txt
-                // same args than the SAVE_IMAGE0 which bugs
-                debugMsg("    TTM_UNKNOWN_5 %d %d %d %d", args[0], args[1], args[2], args[3]);
+                debugMsg("    SAVE_ZONE %d %d %d %d", args[0], args[1], args[2], args[3]);
+                grSaveZone(ttmThread->ttmLayer, args[0], args[1], args[2], args[3]);
                 break;
 
             case 0xA064:
                 // only once, in GJGULIVR.TTM.txt
-                // same args and just before the SAVE_IMAGE0 which bugs
-                debugMsg("    TTM_UNKNOWN_6 %d %d %d %d", args[0], args[1], args[2], args[3]);
+                debugMsg("    RESTORE_ZONE %d %d %d %d", args[0], args[1], args[2], args[3]);
+                grRestoreZone(ttmThread->ttmLayer, args[0], args[1], args[2], args[3]);
                 break;
 
             case 0xA0A4:

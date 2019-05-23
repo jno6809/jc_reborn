@@ -13,13 +13,53 @@ static SDL_Window *sdl_window;
 
 static uint8 ttmPalette[16][4];
 
-static SDL_Surface *grSavedLayer    = NULL;
+static SDL_Surface *grSavedZonesLayer = NULL;
 
 SDL_Surface *grBackgroundSfc = NULL;
 
 int grDx = 0;
 int grDy = 0;
 
+
+
+static void grReleaseScreen()
+{
+    free(grBackgroundSfc->pixels);
+    SDL_FreeSurface(grBackgroundSfc);
+    grBackgroundSfc = NULL;
+}
+
+
+static void grReleaseSavedLayer()
+{
+    SDL_FreeSurface(grSavedZonesLayer);
+    grSavedZonesLayer = NULL;
+}
+
+
+static void grPutPixel(SDL_Surface *sfc, uint16 x, uint16 y, uint8 color)
+{
+    uint8 *pixel = (uint8*) sfc->pixels;
+
+    pixel += (y * sfc->pitch) + (x * sizeof(uint32));
+    pixel[0] = ttmPalette[color][0];
+    pixel[1] = ttmPalette[color][1];
+    pixel[2] = ttmPalette[color][2];
+    pixel[3] = 0;
+}
+
+
+static void grDrawHorizontalLine(SDL_Surface *sfc, sint16 x1, sint16 x2, sint16 y, uint8 color)
+{
+    if (y < 0 || y > 479)
+        return;
+
+    x1 = (x1 < 0   ? 0   : x1 );
+    x2 = (x2 > 639 ? 639 : x2 );
+
+    for (int x=x1; x<=x2; x++)
+        grPutPixel(sfc, x, y, color);
+}
 
 
 void grLoadPalette(struct TPalResource *palResource)
@@ -90,8 +130,8 @@ void graphicsUpdate(struct TTtmThread *ttmBackgroundThread,
                         NULL);
 
     // If not NULL, blit the optional layer of saved zones
-    if (grSavedLayer != NULL)
-        SDL_BlitSurface(grSavedLayer,
+    if (grSavedZonesLayer != NULL)
+        SDL_BlitSurface(grSavedZonesLayer,
                         NULL,
                         SDL_GetWindowSurface(sdl_window),
                         NULL);
@@ -143,15 +183,15 @@ void grSetClipZone(SDL_Surface *sfc, sint16 x1, sint16 y1, sint16 x2, sint16 y2)
 }
 
 
-void grSaveImage0(SDL_Surface *sfc, uint16 x, uint16 y, uint16 width, uint16 height) // TODO : rename ?
+void grCopyZoneToBg(SDL_Surface *sfc, uint16 x, uint16 y, uint16 width, uint16 height)
 {
     x += grDx; y += grDy;
     SDL_Rect rect = { (short) x, (short) y, width + 2, height };
 
-    if (grSavedLayer == NULL)
-        grSavedLayer = grNewLayer();
+    if (grSavedZonesLayer == NULL)
+        grSavedZonesLayer = grNewLayer();
 
-    SDL_BlitSurface(sfc, &rect, grSavedLayer, &rect);
+    SDL_BlitSurface(sfc, &rect, grSavedZonesLayer, &rect);
 
     // Note : without the +2 in width+2 above, there would be a graphical
     // glitch (2 unfilled pixels) on the hull of the cargo, caused by an
@@ -170,28 +210,19 @@ void grSaveImage1(SDL_Surface *sfc, uint16 arg0, uint16 arg1, uint16 arg2, uint1
 }
 
 
-static void grPutPixel(SDL_Surface *sfc, uint16 x, uint16 y, uint8 color)
+void grSaveZone(SDL_Surface *sfc, uint16 x, uint16 y, uint16 width, uint16 height)
 {
-    uint8 *pixel = (uint8*) sfc->pixels;
-
-    pixel += (y * sfc->pitch) + (x * sizeof(uint32));
-    pixel[0] = ttmPalette[color][0];
-    pixel[1] = ttmPalette[color][1];
-    pixel[2] = ttmPalette[color][2];
-    pixel[3] = 0;
+    // Minimalistic implementation: we don't really save the zone,
+    // and let grRestoreZone() simply erase the 'saved zones' layer
 }
 
 
-static void grDrawHorizontalLine(SDL_Surface *sfc, sint16 x1, sint16 x2, sint16 y, uint8 color)
+void grRestoreZone(SDL_Surface *sfc, uint16 x, uint16 y, uint16 width, uint16 height)
 {
-    if (y < 0 || y > 479)
-        return;
-
-    x1 = (x1 < 0   ? 0   : x1 );
-    x2 = (x2 > 639 ? 639 : x2 );
-
-    for (int x=x1; x<=x2; x++)
-        grPutPixel(sfc, x, y, color);
+    // In Johnny's TTMs, we never have RESTORE_ZONE called
+    // while several zones are saved. So we simply free the
+    // whole saved zones layer
+    grReleaseSavedLayer();
 }
 
 
@@ -400,27 +431,12 @@ void grClearScreen(SDL_Surface *sfc)
 }
 
 
-static void grReleaseScreen()
-{
-    free(grBackgroundSfc->pixels);
-    SDL_FreeSurface(grBackgroundSfc);
-    grBackgroundSfc = NULL;
-}
-
-
-static void grReleaseSavedLayer()
-{
-    SDL_FreeSurface(grSavedLayer);
-    grSavedLayer = NULL;
-}
-
-
 void grLoadScreen(char *strArg)
 {
     if (grBackgroundSfc != NULL)
         grReleaseScreen();
 
-    if (grSavedLayer != NULL)
+    if (grSavedZonesLayer != NULL)
         grReleaseSavedLayer();
 
     struct TScrResource *scrResource = findScrResource(strArg);
@@ -457,7 +473,7 @@ void grInitEmptyBackground()
     if (grBackgroundSfc != NULL)
         grReleaseScreen();
 
-    if (grSavedLayer != NULL)
+    if (grSavedZonesLayer != NULL)
         grReleaseSavedLayer();
 
     uint8 *data = safe_malloc(640 * 480 * sizeof(uint32));

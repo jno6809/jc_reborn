@@ -370,7 +370,7 @@ static void dumpTtm(struct TTtmResource *ttmResource)
                 break;
 
             case 0x4204:
-                fprintf( fout, "SAVE_IMAGE0 %d %d %d %d\n", args[0], args[1], args[2], args[3]);
+                fprintf( fout, "COPY_ZONE_TO_BG %d %d %d %d\n", args[0], args[1], args[2], args[3]);
                 break;
 
             case 0x4214:
@@ -382,11 +382,11 @@ static void dumpTtm(struct TTtmResource *ttmResource)
                 break;
 
             case 0xA054:
-                fprintf( fout, "TTM_UNKNOWN_5 %d %d %d %d\n", args[0], args[1], args[2], args[3]);
+                fprintf( fout, "SAVE_ZONE %d %d %d %d\n", args[0], args[1], args[2], args[3]);
                 break;
 
             case 0xA064:
-                fprintf( fout, "TTM_UNKNOWN_6 %d %d %d %d\n", args[0], args[1], args[2], args[3]);
+                fprintf( fout, "RESTORE_ZONE %d %d %d %d\n", args[0], args[1], args[2], args[3]);
                 break;
 
             case 0xA0A4:

@@ -427,7 +427,12 @@ void grDrawSpriteFlip(SDL_Surface *sfc, struct TTtmSlot *ttmSlot, sint16 x, sint
 
 void grClearScreen(SDL_Surface *sfc)
 {
+    SDL_Rect rect;
+
+    SDL_GetClipRect(sfc, &rect);
+    SDL_SetClipRect(sfc, NULL);
     SDL_FillRect(sfc, NULL, SDL_MapRGB(sfc->format, 0xa8, 0, 0xa8));
+    SDL_SetClipRect(sfc, &rect);
 }
 
 

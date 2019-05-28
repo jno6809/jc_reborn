@@ -7,12 +7,13 @@ void storyPlay()
 {
     //randomizeIsland();
 
-//    adsPlayIntro();
+    adsPlayIntro();
+return;
 
     adsInitIsland();
 
     adsPlayWalk();
-return;
+
     adsPlay("STAND.ADS"   , 11);// E
     adsPlay("ACTIVITY.ADS", 4 );
     adsPlay("STAND.ADS"   , 11);// E

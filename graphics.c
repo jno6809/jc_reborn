@@ -537,15 +537,61 @@ void grLoadBmp(struct TTtmSlot *ttmSlot, uint16 slotNo, char *strArg)
 
 void grFadeOut()
 {
+    static int fadeOutType = 0;
     SDL_Surface *sfc = SDL_GetWindowSurface(sdl_window);
 
     grDx = grDy = 0;
 
-    for (int radius=20; radius <= 400; radius += 20) {
-        ticksInit();
-        grDrawCircle(sfc, 320 - radius, 240 - radius, radius << 1, radius << 1, 5, 5);
-        SDL_UpdateWindowSurface(sdl_window);
-        ticksWait(1);
+    switch (fadeOutType) {
+
+        // Circle from center
+        case 0:
+            for (int radius=20; radius <= 400; radius += 20) {
+                grDrawCircle(sfc, 320 - radius, 240 - radius,
+                    radius << 1, radius << 1, 5, 5);
+                SDL_UpdateWindowSurface(sdl_window);
+                ticksWait(1);
+            }
+            break;
+
+        // Left to right
+        case 1:
+            for (int i=0; i < 640 ; i += 40) {
+                grDrawRect(sfc, i, 0, 40, 480, 5);
+                SDL_UpdateWindowSurface(sdl_window);
+                ticksWait(1);
+            }
+            break;
+
+        // Middle to left and right
+        case 2:
+            for (int i=0; i < 320 ; i += 20) {
+                grDrawRect(sfc, 320+i, 0, 20, 480, 5);
+                grDrawRect(sfc, 300-i, 0, 20, 480, 5);
+                SDL_UpdateWindowSurface(sdl_window);
+                ticksWait(1);
+            }
+            break;
+
+        // Right to left
+        case 3:
+            for (int i=600; i >= 0 ; i -= 40) {
+                grDrawRect(sfc, i, 0, 40, 480, 5);
+                SDL_UpdateWindowSurface(sdl_window);
+                ticksWait(1);
+            }
+            break;
+
+        // Rectangle from center
+        case 4:
+            for (int i=1; i <= 20; i++) {
+                grDrawRect(sfc, 320 - i*16, 240 - i*12, i*32, i*24, 5);
+                SDL_UpdateWindowSurface(sdl_window);
+                ticksWait(1);
+            }
+            break;
     }
+
+    fadeOutType = (fadeOutType + 1) % 5;
 }
 

@@ -554,8 +554,26 @@ void grFadeOut()
             }
             break;
 
-        // Left to right
+        // Rectangle from center
         case 1:
+            for (int i=1; i <= 20; i++) {
+                grDrawRect(sfc, 320 - i*16, 240 - i*12, i*32, i*24, 5);
+                SDL_UpdateWindowSurface(sdl_window);
+                ticksWait(1);
+            }
+            break;
+
+        // Right to left
+        case 2:
+            for (int i=600; i >= 0 ; i -= 40) {
+                grDrawRect(sfc, i, 0, 40, 480, 5);
+                SDL_UpdateWindowSurface(sdl_window);
+                ticksWait(1);
+            }
+            break;
+
+        // Left to right
+        case 3:
             for (int i=0; i < 640 ; i += 40) {
                 grDrawRect(sfc, i, 0, 40, 480, 5);
                 SDL_UpdateWindowSurface(sdl_window);
@@ -564,28 +582,10 @@ void grFadeOut()
             break;
 
         // Middle to left and right
-        case 2:
+        case 4:
             for (int i=0; i < 320 ; i += 20) {
                 grDrawRect(sfc, 320+i, 0, 20, 480, 5);
                 grDrawRect(sfc, 300-i, 0, 20, 480, 5);
-                SDL_UpdateWindowSurface(sdl_window);
-                ticksWait(1);
-            }
-            break;
-
-        // Right to left
-        case 3:
-            for (int i=600; i >= 0 ; i -= 40) {
-                grDrawRect(sfc, i, 0, 40, 480, 5);
-                SDL_UpdateWindowSurface(sdl_window);
-                ticksWait(1);
-            }
-            break;
-
-        // Rectangle from center
-        case 4:
-            for (int i=1; i <= 20; i++) {
-                grDrawRect(sfc, 320 - i*16, 240 - i*12, i*32, i*24, 5);
                 SDL_UpdateWindowSurface(sdl_window);
                 ticksWait(1);
             }

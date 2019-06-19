@@ -81,6 +81,10 @@ void islandInit(struct TTtmThread *ttmThread)
     }
 
 grDx = grDy = 0;
+islandState.raft = 2;
+
+    islandState.lowTide = ! (rand() % 20); // on the original, estimated at even less than 5%
+
     islandState.xPos = grDx;
     islandState.yPos = grDy;
 
@@ -88,12 +92,15 @@ grDx = grDy = 0;
 
     grLoadBmp(ttmSlot, 0, "MRAFT.BMP");
 
+    int xRaft = (islandState.lowTide ? 529 : 512);
+    int yRaft = (islandState.lowTide ? 281 : 266);
+
     switch (islandState.raft) {
-        case 1: grDrawSprite(grBackgroundSfc, ttmSlot, 512, 266, 0, 0); break;  // raft-1
-        case 2: grDrawSprite(grBackgroundSfc, ttmSlot, 512, 266, 1, 0); break;  // raft-2
-        case 3: grDrawSprite(grBackgroundSfc, ttmSlot, 512, 266, 2, 0); break;  // raft-3
-        case 4: grDrawSprite(grBackgroundSfc, ttmSlot, 512, 266, 3, 0); break;  // raft-4
-        case 5: grDrawSprite(grBackgroundSfc, ttmSlot, 512, 266, 4, 0); break;  // raft-5
+        case 1: grDrawSprite(grBackgroundSfc, ttmSlot, xRaft, yRaft, 0, 0); break;  // raft-1
+        case 2: grDrawSprite(grBackgroundSfc, ttmSlot, xRaft, yRaft, 1, 0); break;  // raft-2
+        case 3: grDrawSprite(grBackgroundSfc, ttmSlot, xRaft, yRaft, 2, 0); break;  // raft-3
+        case 4: grDrawSprite(grBackgroundSfc, ttmSlot, xRaft, yRaft, 3, 0); break;  // raft-4
+        case 5: grDrawSprite(grBackgroundSfc, ttmSlot, xRaft, yRaft, 4, 0); break;  // raft-5
     }
 
 
@@ -155,15 +162,10 @@ grDx = grDy = 0;
 
     // The island itself
 
-    grDrawSprite(grBackgroundSfc, ttmSlot, 288, 279,  0, 0);  // island
-    grDrawSprite(grBackgroundSfc, ttmSlot, 442, 148, 13, 0);  // trunk
-    grDrawSprite(grBackgroundSfc, ttmSlot, 365, 122, 12, 0);  // leafs
-    grDrawSprite(grBackgroundSfc, ttmSlot, 396, 279, 14, 0);  // palmtree's shadow
-
-
-    // Low tide ?
-
-    islandState.lowTide = ! (rand() % 20); // on the original, estimated at even less than 5%
+    grDrawSprite(grBackgroundSfc, ttmSlot, 288, 279,  0, 0);      // island
+    grDrawSprite(grBackgroundSfc, ttmSlot, 442, 148, 13, 0);      // trunk
+    grDrawSprite(grBackgroundSfc, ttmSlot, 365, 122, 12, 0);      // leafs
+    grDrawSprite(grBackgroundSfc, ttmSlot, 396, 279, 14, 0);      // palmtree's shadow
 
     if (islandState.lowTide) {
         grDrawSprite(grBackgroundSfc, ttmSlot, 249, 303,  1, 0);  // low tide shore

@@ -25,24 +25,14 @@
 #include "graphics.h"
 #include "island.h"
 
-struct TIslandState {
-    int lowTide;
-    int night;
-    int raft;
-    int holiday;
-    int xPos;
-    int yPos;
-};
 
-static struct TIslandState islandState;
+struct TIslandState islandState = { 0, 0, 0, 0, 0, 0 };
 
 
 void islandInit(struct TTtmThread *ttmThread)
 {
     struct TTtmSlot *ttmSlot = ttmThread->ttmSlot;
 
-
-    islandState.night = !(rand() % 4); // TODO : should be determined from system clock
 
     if (islandState.night) {
         grLoadScreen("NIGHT.SCR");
@@ -55,38 +45,9 @@ void islandInit(struct TTtmThread *ttmThread)
 
     ttmThread->ttmLayer = grBackgroundSfc;
 
+    grDx = islandState.xPos;
+    grDy = islandState.yPos;
 
-    // Randomize island pos
-
-    int random = (rand() % 100);
-
-    if (random < 50) {
-        grDx = grDy = 0;
-    }
-    else if (random < 55) {
-        grDx = -272;
-        grDy = +10;
-    }
-    else if (random < 75) {
-        grDx = -222 + (rand() % 109);
-        grDy = -44  + (rand() % 128);
-    }
-    else if (random < 95) {
-        grDx = -114 + (rand() % 134);
-        grDy = -14  + (rand() % 99 );
-    }
-    else {
-        grDx = -114 + (rand() % 119);
-        grDy = -73  + (rand() % 60 );
-    }
-
-grDx = grDy = 0;
-islandState.raft = 2;
-
-    islandState.lowTide = ! (rand() % 20); // on the original, estimated at even less than 5%
-
-    islandState.xPos = grDx;
-    islandState.yPos = grDy;
 
     // Raft
 
@@ -191,6 +152,9 @@ void islandAnimate(struct TTtmThread *ttmThread)
     struct TTtmSlot *ttmSlot = ttmThread->ttmSlot;
 
 
+    grDx = islandState.xPos;
+    grDy = islandState.yPos;
+
     if (islandState.lowTide) {
 
         counter2++;
@@ -227,16 +191,21 @@ void islandInitHoliday(struct TTtmThread *ttmThread)
 {
     struct TTtmSlot *ttmSlot = ttmThread->ttmSlot;
 
+    if (islandState.holiday) {
 
-    grLoadBmp(ttmSlot, 0, "HOLIDAY.BMP");
+        grDx = islandState.xPos;
+        grDy = islandState.yPos;
 
-    switch (islandState.holiday) {
-        case 1: grDrawSprite(ttmThread->ttmLayer, ttmSlot, 410, 298, 0, 0); break;      // Halloween : 29/10 to 31/10
-        case 2: grDrawSprite(ttmThread->ttmLayer, ttmSlot, 333, 286, 1, 0); break;      // St Patrick: 15/03 to 17/03
-        case 3: grDrawSprite(ttmThread->ttmLayer, ttmSlot, 404, 267, 2, 0); break;      // Christmas : 23/12 to 25/12
-        case 4: grDrawSprite(ttmThread->ttmLayer, ttmSlot, 361, 155, 3, 0); break;      // New year  : 29/12 to 01/01
+        grLoadBmp(ttmSlot, 0, "HOLIDAY.BMP");
+
+        switch (islandState.holiday) {
+            case 1: grDrawSprite(ttmThread->ttmLayer, ttmSlot, 410, 298, 0, 0); break;      // Halloween : 29/10 to 31/10
+            case 2: grDrawSprite(ttmThread->ttmLayer, ttmSlot, 333, 286, 1, 0); break;      // St Patrick: 15/03 to 17/03
+            case 3: grDrawSprite(ttmThread->ttmLayer, ttmSlot, 404, 267, 2, 0); break;      // Christmas : 23/12 to 25/12
+            case 4: grDrawSprite(ttmThread->ttmLayer, ttmSlot, 361, 155, 3, 0); break;      // New year  : 29/12 to 01/01
+        }
+
+        grReleaseBmp(ttmSlot,0);
     }
-
-    grReleaseBmp(ttmSlot,0);
 }
 

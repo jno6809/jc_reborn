@@ -30,6 +30,10 @@
 #include "ttm.h"
 
 
+int ttmDx = 0;
+int ttmDy = 0;
+
+
 static uint32 ttmFindPreviousTag(struct TTtmSlot *ttmSlot, uint32 offset)
 {
     uint32 result = 0;
@@ -141,6 +145,9 @@ void ttmPlay(struct TTtmThread *ttmThread)     // TODO
     int continueLoop = 1;
     struct TTtmSlot *ttmSlot;
 
+
+    grDx = ttmDx;
+    grDy = ttmDy;
 
     ttmSlot = ttmThread->ttmSlot;
     offset = ttmThread->ip;

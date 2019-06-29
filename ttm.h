@@ -21,6 +21,9 @@
  *
  */
 
+extern int ttmDx;
+extern int ttmDy;
+
 uint32 ttmFindTag(struct TTtmSlot *ttmSlot, uint16 reqdTag);
 void ttmLoadTtm(struct TTtmSlot *ttmSlot, char *ttmName);
 void ttmInitSlot(struct TTtmSlot *ttmSlot);

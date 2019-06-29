@@ -21,6 +21,17 @@
  *
  */
 
+struct TIslandState {
+    int lowTide;
+    int night;
+    int raft;
+    int holiday;
+    int xPos;
+    int yPos;
+};
+
+extern struct TIslandState islandState;
+
 void islandInit(struct TTtmThread *ttmThread);
 void islandAnimate(struct TTtmThread *ttmThread);
 void islandInitHoliday(struct TTtmThread *ttmThread);

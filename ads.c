@@ -683,6 +683,8 @@ void adsPlay(char *adsName, uint16 adsTag)
     for (int i=0; i < MAX_TTM_SLOTS; i++)
         ttmResetSlot(&ttmSlots[i]);
 
+    grRestoreZone(NULL, 0, 0, 0, 0);
+
     adsReleaseAds();
 }
 
@@ -750,7 +752,7 @@ void adsPlayIntro()
 void adsInitIsland()
 {
     // Init the background thread (animated waves)
-    // and call ttmInitIsland() to draw the background
+    // and call islandInit() to draw the background
 
     ttmInitSlot(&ttmBackgroundSlot);
 

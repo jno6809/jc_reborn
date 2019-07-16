@@ -77,8 +77,8 @@ static void grDrawHorizontalLine(SDL_Surface *sfc, sint16 x1, sint16 x2, sint16 
     if (y < 0 || y > 479)
         return;
 
-    x1 = (x1 < 0   ? 0   : x1 );
-    x2 = (x2 > 639 ? 639 : x2 );
+    x1 = x1 < 0   ? 0   : x1;
+    x2 = x2 > 639 ? 639 : x2;
 
     for (int x=x1; x<=x2; x++)
         grPutPixel(sfc, x, y, color);
@@ -112,11 +112,8 @@ void graphicsInit(int fullScreen)
         (fullScreen ? SDL_WINDOW_FULLSCREEN : 0)
     );
 
-    if (sdl_window == NULL) {
-
-        printf("Could not create window: %s\n", SDL_GetError());
-        exit(1);
-    }
+    if (sdl_window == NULL)
+        fatalError("Could not create window: %s", SDL_GetError());
 
     if (fullScreen)
         SDL_ShowCursor(SDL_DISABLE);
@@ -313,13 +310,13 @@ void grDrawRect(SDL_Surface *sfc, sint16 x, sint16 y, uint16 width, uint16 heigh
     x += grDx; y += grDy;
 
     SDL_Rect dest = { x, y, width, height };
-    SDL_FillRect( sfc,
-                  &dest,
-                  SDL_MapRGB(sfc->format,
-                             ttmPalette[color][2],  // TODO ?
-                             ttmPalette[color][1],
-                             ttmPalette[color][0]
-                  )
+    SDL_FillRect(sfc,
+                 &dest,
+                 SDL_MapRGB(sfc->format,
+                            ttmPalette[color][2],  // TODO ?
+                            ttmPalette[color][1],
+                            ttmPalette[color][0]
+                 )
     );
 }
 
@@ -330,13 +327,13 @@ void grDrawCircle(SDL_Surface *sfc, sint16 x1, sint16 y1, uint16 width, uint16 h
 
     // We can only draw regular circles
     if (width != height) {
-        printf("Warning : DRAW_CIRCLE : unable to draw ellipse\n");
+        fprintf(stderr, "Warning : grDrawCircle() : unable to draw ellipse\n");
         return;
     }
 
     // In original data, every width is even
     if (width % 2) {
-        printf("Warning : DRAW_CIRCLE : unable to process odd diameters\n");
+        fprintf(stderr, "Warning : grDrawCircle() : unable to process odd diameters\n");
         return;
     }
 
@@ -348,8 +345,8 @@ void grDrawCircle(SDL_Surface *sfc, sint16 x1, sint16 y1, uint16 width, uint16 h
     uint16 r = (width >> 1) - 1;
     uint16 xc = x1 + r;
     uint16 yc = y1 + r;
-    sint16 x = 0 ;
-    sint16 y = r ;
+    sint16 x = 0;
+    sint16 y = r;
     int d = 1 - r;
 
     while (1) {
@@ -414,7 +411,7 @@ void grDrawCircle(SDL_Surface *sfc, sint16 x1, sint16 y1, uint16 width, uint16 h
 void grDrawSprite(SDL_Surface *sfc, struct TTtmSlot *ttmSlot, sint16 x, sint16 y, uint16 spriteNo, uint16 imageNo)
 {
     if (spriteNo >= ttmSlot->numSprites[imageNo]) {
-        printf("Warning : less than %d sprites loaded in slot %d\n", imageNo, spriteNo);
+        fprintf(stderr, "Warning : grDrawSprite(): less than %d sprites loaded in slot %d\n", imageNo, spriteNo);
         return;
     }
 
@@ -430,7 +427,7 @@ void grDrawSprite(SDL_Surface *sfc, struct TTtmSlot *ttmSlot, sint16 x, sint16 y
 void grDrawSpriteFlip(SDL_Surface *sfc, struct TTtmSlot *ttmSlot, sint16 x, sint16 y, uint16 spriteNo, uint16 imageNo)
 {
     if (spriteNo >= ttmSlot->numSprites[imageNo]) {
-        printf("Warning : less than %d sprites loaded in slot %d\n", imageNo, spriteNo);
+        fprintf(stderr, "Warning : grDrawSpriteFlip(): less than %d sprites loaded in slot %d\n", imageNo, spriteNo);
         return;
     }
 
@@ -470,11 +467,11 @@ void grLoadScreen(char *strArg)
     struct TScrResource *scrResource = findScrResource(strArg);
 
     if ((scrResource->width % 2) == 1) {
-        printf("LOAD_SCREEN - can't manage odd widths\n");
+        fprintf(stderr, "Warning: grLoadScreen(): can't manage odd widths\n");
     }
 
     if (scrResource->width > 640 || scrResource->height > 480) {
-        fatalError("LOAD_SCREEN - can't manage more than 640x480 resolutions\n");
+        fatalError("grLoadScreen(): can't manage more than 640x480 resolutions");
     }
 
     uint16 width  = scrResource->width;
@@ -491,7 +488,7 @@ void grLoadScreen(char *strArg)
         inPtr++;
     }
 
-    grBackgroundSfc = SDL_CreateRGBSurfaceFrom( (void*)outData,
+    grBackgroundSfc = SDL_CreateRGBSurfaceFrom((void*)outData,
                                       width, height, 32, 4*width, 0, 0, 0, 0);
 }
 
@@ -506,7 +503,7 @@ void grInitEmptyBackground()
 
     uint8 *data = safe_malloc(640 * 480 * sizeof(uint32));
     memset(data, 0, 640 * 480 * sizeof(uint32));
-    grBackgroundSfc = SDL_CreateRGBSurfaceFrom( (void*)data,
+    grBackgroundSfc = SDL_CreateRGBSurfaceFrom((void*)data,
                                       640, 480, 32, 4*640, 0, 0, 0, 0);
 }
 
@@ -534,8 +531,8 @@ void grLoadBmp(struct TTtmSlot *ttmSlot, uint16 slotNo, char *strArg)
 
     for (int image=0; image < bmpResource->numImages; image++) {
 
-        if (( bmpResource->widths[image] % 2 ) == 1)
-            printf( "Error : can't manage odd widths\n" );
+        if ((bmpResource->widths[image] % 2) == 1)
+            fatalError("grLoadBmp(): can't manage odd widths");
 
         uint16 width  = bmpResource->widths[image];
         uint16 height = bmpResource->heights[image];
@@ -550,7 +547,7 @@ void grLoadBmp(struct TTtmSlot *ttmSlot, uint16 slotNo, char *strArg)
             inPtr++;
         }
 
-        SDL_Surface *surface = SDL_CreateRGBSurfaceFrom( (void*)outData,
+        SDL_Surface *surface = SDL_CreateRGBSurfaceFrom((void*)outData,
                                                width, height, 32, 4*width, 0, 0, 0, 0);
         SDL_SetColorKey(surface, SDL_TRUE, SDL_MapRGB(surface->format, 0xa8, 0, 0xa8));
         ttmSlot->sprites[slotNo][image] = surface;
@@ -588,7 +585,7 @@ void grFadeOut()
 
         // Right to left
         case 2:
-            for (int i=600; i >= 0 ; i -= 40) {
+            for (int i=600; i >= 0; i -= 40) {
                 grDrawRect(sfc, i, 0, 40, 480, 5);
                 SDL_UpdateWindowSurface(sdl_window);
                 ticksWait(1);
@@ -597,7 +594,7 @@ void grFadeOut()
 
         // Left to right
         case 3:
-            for (int i=0; i < 640 ; i += 40) {
+            for (int i=0; i < 640; i += 40) {
                 grDrawRect(sfc, i, 0, 40, 480, 5);
                 SDL_UpdateWindowSurface(sdl_window);
                 ticksWait(1);
@@ -606,7 +603,7 @@ void grFadeOut()
 
         // Middle to left and right
         case 4:
-            for (int i=0; i < 320 ; i += 20) {
+            for (int i=0; i < 320; i += 20) {
                 grDrawRect(sfc, 320+i, 0, 20, 480, 5);
                 grDrawRect(sfc, 300-i, 0, 20, 480, 5);
                 SDL_UpdateWindowSurface(sdl_window);

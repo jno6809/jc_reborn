@@ -63,7 +63,7 @@ void *safe_malloc(size_t size)
 {
     void *ptr = malloc(size);
 
-    if ( ptr == NULL )
+    if (ptr == NULL)
         fatalError("failed to malloc() %d bytes", size);
 
     return ptr;
@@ -74,10 +74,10 @@ FILE *safe_fopen(const char *pathname, const char *mode)
 {
     FILE *f;
 
-    f = fopen( pathname, mode );
+    f = fopen(pathname, mode);
 
-    if ( f == NULL )
-        fatalError( "unable to open file %s in mode '%s'", pathname, mode );
+    if (f == NULL)
+        fatalError("unable to open file %s in mode '%s'", pathname, mode);
 
     return f;
 }

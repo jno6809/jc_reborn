@@ -37,7 +37,7 @@ static void ticksPause()
 
     SDL_Delay(5);
 
-    while ( stillPaused && SDL_WaitEvent(&event) ) {
+    while (stillPaused && SDL_WaitEvent(&event)) {
 
         switch(event.type) {
 
@@ -74,7 +74,7 @@ void ticksWait(uint16 delay)
         SDL_Delay(5);  // TODO
 
         SDL_Event event;
-        while ( SDL_PollEvent(&event) ) {
+        while (SDL_PollEvent(&event)) {
 
             switch(event.type) {
 

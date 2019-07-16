@@ -1,7 +1,7 @@
 
 CFLAGS=-Wall -Wpedantic
 
-LDFLAGS=-lSDL2
+LDLIBS=-lSDL2
 
 EXE =   myscrantic
 
@@ -19,7 +19,10 @@ OBJ =   myscrantic.o \
         graphics.o \
         ticks.o
 
-myscrantic: $(OBJ)
+
+all: $(EXE)
+
+$(EXE): $(OBJ)
 
 clean:
 	rm -v $(OBJ) $(EXE) 2> /dev/null ; true

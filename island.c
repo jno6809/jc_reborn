@@ -39,7 +39,7 @@ void islandInit(struct TTtmThread *ttmThread)
     }
     else {
         char scrName[12];
-        sprintf(scrName, "OCEAN0%d.SCR", rand()%3);
+        sprintf(scrName, "OCEAN0%d.SCR", rand() % 3);
         grLoadScreen(scrName);
     }
 
@@ -183,7 +183,6 @@ void islandAnimate(struct TTtmThread *ttmThread)
         counter1++;
         counter1 %= 3;
     }
-
 }
 
 

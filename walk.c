@@ -31,8 +31,8 @@
 #include "walk_data.h"
 
 
-void walkPlay(struct TTtmThread *ttmThreads, int tag) {
-
+void walkPlay(struct TTtmThread *ttmThreads, int tag)
+{
     struct TTtmSlot *ttmSlot = ttmThreads[0].ttmSlot;
     SDL_Surface *sfc = ttmThreads[0].ttmLayer;
 

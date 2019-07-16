@@ -53,7 +53,6 @@ static struct TMapFile mapFile;
 
 static struct TAdsResource *parseAdsResource(FILE *f)
 {
-
     struct TAdsResource *adsResource;
     uint8 *buffer;
 
@@ -106,7 +105,7 @@ static struct TAdsResource *parseAdsResource(FILE *f)
     adsResource->compressionMethod = readUint8(f);
     adsResource->uncompressedSize = readUint32(f);
 
-    adsResource->uncompressedData = uncompress( f,
+    adsResource->uncompressedData = uncompress(f,
                                       adsResource->compressionMethod,
                                       adsResource->compressedSize,
                                       adsResource->uncompressedSize
@@ -169,9 +168,9 @@ static struct TBmpResource *parseBmpResource(FILE *f)
 
     bmpResource->compressedSize = readUint32(f) - 5; // discard size of compressionmethod+uncompressedsize
     bmpResource->compressionMethod = readUint8(f);
-    bmpResource->uncompressedSize = readUint32(f) ;
+    bmpResource->uncompressedSize = readUint32(f);
 
-    bmpResource->uncompressedData = uncompress( f,
+    bmpResource->uncompressedData = uncompress(f,
                                       bmpResource->compressionMethod,
                                       bmpResource->compressedSize,
                                       bmpResource->uncompressedSize
@@ -225,6 +224,7 @@ static struct TScrResource *parseScrResource(FILE *f)
     struct TScrResource *scrResource;
     uint8 *buffer;
 
+
     scrResource = safe_malloc(sizeof(struct TScrResource));
 
     buffer = readUint8Block(f,4);
@@ -256,7 +256,7 @@ static struct TScrResource *parseScrResource(FILE *f)
     scrResource->compressionMethod = readUint8(f);
     scrResource->uncompressedSize = readUint32(f) ;
 
-    scrResource->uncompressedData = uncompress( f,
+    scrResource->uncompressedData = uncompress(f,
                                       scrResource->compressionMethod,
                                       scrResource->compressedSize,
                                       scrResource->uncompressedSize
@@ -302,7 +302,7 @@ static struct TTtmResource *parseTtmResource(FILE *f)
     ttmResource->compressionMethod = readUint8(f);
     ttmResource->uncompressedSize = readUint32(f);
 
-    ttmResource->uncompressedData = uncompress( f,
+    ttmResource->uncompressedData = uncompress(f,
                                       ttmResource->compressionMethod,
                                       ttmResource->compressedSize,
                                       ttmResource->uncompressedSize
@@ -370,8 +370,8 @@ static void parseMapFile(char *fileName)
 }
 
 
-static void parseResourceFile(char * filename) {
-
+static void parseResourceFile(char * filename)
+{
     FILE *f;
 
     f = fopen(mapFile.resFileName,"r");
@@ -399,27 +399,27 @@ static void parseResourceFile(char * filename) {
              fflush(stdout);
         }
 
-        if ( !strcmp(resType, ".ADS") ) {
+        if (!strcmp(resType, ".ADS")) {
             adsResources[numAdsResources] = parseAdsResource(f);
             adsResources[numAdsResources]->resName = resName;
             numAdsResources++;
         }
-        else if ( !strcmp(resType, ".BMP") ) {
+        else if (!strcmp(resType, ".BMP")) {
             bmpResources[numBmpResources] = parseBmpResource(f);
             bmpResources[numBmpResources]->resName = resName;
             numBmpResources++;
         }
-        else if ( !strcmp(resType, ".PAL") ) {
+        else if (!strcmp(resType, ".PAL")) {
             palResources[numPalResources] = parsePalResource(f);
             palResources[numPalResources]->resName = resName;
             numPalResources++;
         }
-        else if ( !strcmp(resType, ".SCR") ) {
+        else if (!strcmp(resType, ".SCR")) {
             scrResources[numScrResources] = parseScrResource(f);
             scrResources[numScrResources]->resName = resName;
             numScrResources++;
         }
-        else if ( !strcmp(resType, ".TTM") ) {
+        else if (!strcmp(resType, ".TTM")) {
             ttmResources[numTtmResources] = parseTtmResource(f);
             ttmResources[numTtmResources]->resName = resName;
             numTtmResources++;
@@ -436,7 +436,8 @@ static void parseResourceFile(char * filename) {
 }
 
 
-void parseResourceFiles(char * filename) {
+void parseResourceFiles(char * filename)
+{
     parseMapFile(filename);
     parseResourceFile(filename);
 }
@@ -444,7 +445,6 @@ void parseResourceFiles(char * filename) {
 
 struct TAdsResource *findAdsResource(char *searchString)
 {
-
     struct TAdsResource *result = NULL;
 
     for (int i=0; i < numAdsResources && result == NULL; i++) {
@@ -453,7 +453,7 @@ struct TAdsResource *findAdsResource(char *searchString)
     }
 
     if (result == NULL)
-        fprintf(stderr, "Warning : ADS resource %s not found.\n", searchString);
+        fatalError("ADS resource %s not found.", searchString);
 
     return result;
 }
@@ -461,7 +461,6 @@ struct TAdsResource *findAdsResource(char *searchString)
 
 struct TBmpResource *findBmpResource(char *searchString)
 {
-
     struct TBmpResource *result = NULL;
 
     for (int i=0; i < numBmpResources && result == NULL; i++) {
@@ -470,7 +469,7 @@ struct TBmpResource *findBmpResource(char *searchString)
     }
 
     if (result == NULL)
-        fprintf(stderr, "Warning : BMP resource %s not found.\n", searchString);
+        fatalError("BMP resource %s not found.", searchString);
 
     return result;
 }
@@ -481,12 +480,12 @@ struct TScrResource *findScrResource(char *searchString)
     struct TScrResource *result = NULL;
 
     for (int i=0; i < numScrResources && result == NULL; i++) {
-        if ( !strcmp(scrResources[i]->resName, searchString) )
+        if (!strcmp(scrResources[i]->resName, searchString))
             result = scrResources[i];
     }
 
     if (result == NULL)
-        fprintf(stderr, "Warning : SCR resource %s not found.\n", searchString);
+        fatalError("SCR resource %s not found.", searchString);
 
     return result;
 }
@@ -494,16 +493,15 @@ struct TScrResource *findScrResource(char *searchString)
 
 struct TTtmResource *findTtmResource(char *searchString)
 {
-
     struct TTtmResource *result = NULL;
 
     for (int i=0; i < numTtmResources && result == NULL; i++) {
-        if ( !strcmp(ttmResources[i]->resName, searchString) )
+        if (!strcmp(ttmResources[i]->resName, searchString))
             result = ttmResources[i];
     }
 
     if (result == NULL)
-        fprintf(stderr, "Warning : TTM resource %s not found.\n", searchString);
+        fatalError("TTM resource %s not found.", searchString);
 
     return result;
 }

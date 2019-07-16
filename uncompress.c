@@ -40,8 +40,9 @@ struct TCodeTableEntry {
 
 static uint8 getByte(FILE *f)
 {
-    if (inOffset >= maxInOffset)
+    if (inOffset >= maxInOffset) {
         return 0;
+    }
     else {
         inOffset++;
         uint8 b = (uint8) fgetc(f);
@@ -52,7 +53,7 @@ static uint8 getByte(FILE *f)
 
 static uint16 getBits(FILE *f, uint32 n)
 {
-    if ( n == 0 )
+    if (n == 0)
         return 0;
 
     uint32 x = 0;
@@ -73,7 +74,7 @@ static uint16 getBits(FILE *f, uint32 n)
 }
 
 
-uint8 *uncompressLZW( FILE *f, uint32 inSize, uint32 outSize )
+uint8 *uncompressLZW(FILE *f, uint32 inSize, uint32 outSize)
 {
     uint8  *outData;
     struct TCodeTableEntry codeTable[4096];
@@ -87,20 +88,20 @@ uint8 *uncompressLZW( FILE *f, uint32 inSize, uint32 outSize )
     uint32 outOffset = 0;
 
 
-    if ( outSize == 0 )
+    if (outSize == 0)
         fatalError("uncompressLZW() : can't uncompress to 0 bytes\n");
 
     maxInOffset = inSize;
-    nextbit = 0;
-    inOffset = 0;
-    outData = safe_malloc(outSize * sizeof(uint8));
+    nextbit     = 0;
+    inOffset    = 0;
+    outData     = safe_malloc(outSize * sizeof(uint8));
 
-    current = (uint8) getByte(f);
+    current  = (uint8) getByte(f);
     lastbyte = oldcode = getBits(f, n_bits);
 
     outData[outOffset++] = (uint8) oldcode;
 
-    while ( inOffset < inSize ) {
+    while (inOffset < inSize) {
 
         uint16 newcode = getBits(f, n_bits);
         bitpos += n_bits;
@@ -109,7 +110,7 @@ uint8 *uncompressLZW( FILE *f, uint32 inSize, uint32 outSize )
 
             uint32 nbits3 = n_bits << 3;
             uint32 nskip = (nbits3 - ((bitpos - 1) % nbits3)) - 1;
-            getBits( f, nskip );
+            getBits(f, nskip);
             n_bits = 9;
             free_entry = 256;
             bitpos = 0;
@@ -118,9 +119,9 @@ uint8 *uncompressLZW( FILE *f, uint32 inSize, uint32 outSize )
 
             uint16 code = newcode;
 
-            if ( code >= free_entry ) {
+            if (code >= free_entry) {
 
-                if ( stackPtr > 4095 )
+                if (stackPtr > 4095)
                     break;
 
                 decodeStack[stackPtr] = (uint8) lastbyte;
@@ -142,7 +143,7 @@ uint8 *uncompressLZW( FILE *f, uint32 inSize, uint32 outSize )
             stackPtr++;
             lastbyte = code;
 
-            while ( stackPtr > 0 ) {
+            while (stackPtr > 0) {
 
                 stackPtr--;
 
@@ -159,7 +160,7 @@ uint8 *uncompressLZW( FILE *f, uint32 inSize, uint32 outSize )
                 free_entry++;
                 uint32 temp = 1 << n_bits;
 
-                if ( free_entry >= temp && n_bits < 12 ) {
+                if (free_entry >= temp && n_bits < 12) {
                     n_bits++;
                     bitpos = 0;
                 }
@@ -169,19 +170,19 @@ uint8 *uncompressLZW( FILE *f, uint32 inSize, uint32 outSize )
         }
     }
 
-    if ( inOffset != inSize )
-        printf("Error while uncompressing LZW\n");
+    if (inOffset != inSize)
+        fatalError("error while uncompressing LZW");
 
     return outData;
 }
 
 
-uint8 *uncompressRLE( FILE *f, uint32 inSize, uint32 outSize )
+uint8 *uncompressRLE(FILE *f, uint32 inSize, uint32 outSize)
 {
     uint8 *outData;
     uint32 outOffset = 0;
 
-    inOffset = 0;
+    inOffset    = 0;
     maxInOffset = inSize;
 
     outData = safe_malloc(outSize * sizeof(uint8));
@@ -200,8 +201,7 @@ uint8 *uncompressRLE( FILE *f, uint32 inSize, uint32 outSize )
                 outData[outOffset++] = b;    // TODO outOffset > outSize ?
         }
         else {
-
-            for (int i=0 ;  i < control ; i++) {
+            for (int i=0;  i < control; i++) {
                 outData[outOffset++] = (uint8) fgetc(f);  // TODO idem
                 inOffset++;
             }
@@ -209,27 +209,27 @@ uint8 *uncompressRLE( FILE *f, uint32 inSize, uint32 outSize )
     }
 
     if (inOffset != inSize)
-        printf("Error while uncompressing RLE\n");
+        fatalError("error while uncompressing RLE");
 
     return outData;
 }
 
 
-uint8 *uncompress( FILE *f, uint8 compressionMethod, uint32 inSize, uint32 outSize )
+uint8 *uncompress(FILE *f, uint8 compressionMethod, uint32 inSize, uint32 outSize)
 {
     switch (compressionMethod) {
 
         case 1:
-            return uncompressRLE( f, inSize, outSize );
-            break ;;
+            return uncompressRLE(f, inSize, outSize);
+            break;
 
         case 2:
-            return uncompressLZW( f, inSize, outSize );
-            break ;;
+            return uncompressLZW(f, inSize, outSize);
+            break;
 
         default:
             return NULL;
-            break ;;
+            break;
     }
 }
 

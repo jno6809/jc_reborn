@@ -77,14 +77,14 @@ void createDumpDirs()
 }
 
 
-static void dumpBmp(struct TBmpResource *bmpResource, struct TPalResource *palResource )
+static void dumpBmp(struct TBmpResource *bmpResource, struct TPalResource *palResource)
 {
     FILE *fout;
     uint8 *data;
     char filename[MAX_FILENAME_LEN];
 
 
-    printf("---- Dumping BMP : %s (%d images) \n", bmpResource->resName,    \
+    printf("---- Dumping BMP : %s (%d images) \n", bmpResource->resName,
                                                    bmpResource->numImages);
 
     data = bmpResource->uncompressedData;
@@ -96,25 +96,25 @@ static void dumpBmp(struct TBmpResource *bmpResource, struct TPalResource *palRe
             return;
         }
 
-        snprintf(filename, MAX_FILENAME_LEN, "%s/%s/%s.%03d.xpm",  \
-                                           dumpDir,                \
-                                           dumpBmpDir,             \
-                                           bmpResource->resName,   \
+        snprintf(filename, MAX_FILENAME_LEN, "%s/%s/%s.%03d.xpm",
+                                           dumpDir,
+                                           dumpBmpDir,
+                                           bmpResource->resName,
                                            image);
         fout = safe_fopen(filename ,"w");
 
         uint16 width = bmpResource->widths[image];
         uint16 height = bmpResource->heights[image];
 
-        fputs( "/* XPM */\n", fout );
-        fputs( "static char * scrantic[] = {\n", fout );
-        fprintf( fout, "\"%d %d 16 1\",\n", width, height );
+        fputs("/* XPM */\n", fout);
+        fputs("static char * scrantic[] = {\n", fout);
+        fprintf(fout, "\"%d %d 16 1\",\n", width, height);
 
         for (int i=0; i < 16; i++)
-            fprintf(fout, "\"%1x c #%02x%02x%02x\",\n", i,          \
-                                    palResource->colors[i].r << 2,   \
-                                    palResource->colors[i].g << 2,   \
-                                    palResource->colors[i].b << 2 );
+            fprintf(fout, "\"%1x c #%02x%02x%02x\",\n", i,
+                                    palResource->colors[i].r << 2,
+                                    palResource->colors[i].g << 2,
+                                    palResource->colors[i].b << 2);
 
         for (int y=0; y < height; y++) {  // TODO
 
@@ -131,12 +131,12 @@ static void dumpBmp(struct TBmpResource *bmpResource, struct TPalResource *palRe
                 fputs ("\",\n", fout);
         }
 
-        fclose( fout);
+        fclose(fout);
     }
 }
 
 
-static void dumpScr(struct TScrResource *scrResource, struct TPalResource *palResource )
+static void dumpScr(struct TScrResource *scrResource, struct TPalResource *palResource)
 {
     FILE *fout;
     uint8 *data;
@@ -145,29 +145,29 @@ static void dumpScr(struct TScrResource *scrResource, struct TPalResource *palRe
 
     printf("---- Dumping SCR : %s  \n", scrResource->resName);
 
-    if ( (scrResource->width % 2) == 1 ) {
+    if ((scrResource->width % 2) == 1) {
         printf("Error : can't manage odd widths\n");
         return;
     }
 
-    snprintf( filename, MAX_FILENAME_LEN, "%s/%s/%s.xpm",      \
-                                      dumpDir,                 \
-                                      dumpScrDir,              \
-                                      scrResource->resName );
+    snprintf(filename, MAX_FILENAME_LEN, "%s/%s/%s.xpm",
+                                      dumpDir,
+                                      dumpScrDir,
+                                      scrResource->resName);
     fout = safe_fopen(filename ,"w");
 
     uint16 width = scrResource->width;
     uint16 height = scrResource->height;
 
-    fputs( "/* XPM */\n", fout );
-    fputs( "static char * scrantic[] = {\n", fout );
-    fprintf( fout, "\"%d %d 16 1\",\n", width, height );
+    fputs("/* XPM */\n", fout);
+    fputs("static char * scrantic[] = {\n", fout);
+    fprintf(fout, "\"%d %d 16 1\",\n", width, height);
 
     for (int i=0; i < 16; i++)
-        fprintf(fout, "\"%1x c #%02x%02x%02x\",\n", i,          \
-                                palResource->colors[i].r << 2,   \
-                                palResource->colors[i].g << 2,   \
-                                palResource->colors[i].b << 2 );
+        fprintf(fout, "\"%1x c #%02x%02x%02x\",\n", i,
+                                palResource->colors[i].r << 2,
+                                palResource->colors[i].g << 2,
+                                palResource->colors[i].b << 2);
 
     data = scrResource->uncompressedData;
 
@@ -200,10 +200,10 @@ static void dumpAds(struct TAdsResource *adsResource)
 
     printf("---- Dumping ADS : %s  \n", adsResource->resName);
 
-    snprintf(filename, MAX_FILENAME_LEN, "%s/%s/%s.txt",              \
-                                               dumpDir,               \
-                                               dumpAdsDir,            \
-                                               adsResource->resName );
+    snprintf(filename, MAX_FILENAME_LEN, "%s/%s/%s.txt",
+                                               dumpDir,
+                                               dumpAdsDir,
+                                               adsResource->resName);
     fout = safe_fopen(filename ,"w");
 
 
@@ -211,15 +211,15 @@ static void dumpAds(struct TAdsResource *adsResource)
     fprintf(fout, "\n ======== Resources list ========\n\n");
 
     for (int i=0; i < adsResource->numRes; i++)
-        fprintf(fout, "%d : %s\n",  adsResource->res[i].id,     \
-                                    adsResource->res[i].name );
+        fprintf(fout, "%d : %s\n",  adsResource->res[i].id,
+                                    adsResource->res[i].name);
 
 
     fprintf(fout, "\n\n ======== Tags list ========\n\n");
 
     for (int i=0; i < adsResource->numTags; i++)
-        fprintf(fout, "%d : %s\n",  adsResource->tags[i].id,            \
-                                    adsResource->tags[i].description );
+        fprintf(fout, "%d : %s\n",  adsResource->tags[i].id,
+                                    adsResource->tags[i].description);
 
 
     fprintf(fout, "\n\n ======== ADS script ========\n");
@@ -261,7 +261,7 @@ static void dumpAds(struct TAdsResource *adsResource)
         fprintf(fout, "\n");
     }
 
-    fclose( fout);
+    fclose(fout);
 }
 
 
@@ -280,10 +280,10 @@ static void dumpTtm(struct TTtmResource *ttmResource)
 
     printf("---- Dumping TTM : %s  \n", ttmResource->resName);
 
-    snprintf(filename, MAX_FILENAME_LEN, "%s/%s/%s.txt",     \
-                                      dumpDir,               \
-                                      dumpTtmDir,            \
-                                      ttmResource->resName );
+    snprintf(filename, MAX_FILENAME_LEN, "%s/%s/%s.txt",
+                                      dumpDir,
+                                      dumpTtmDir,
+                                      ttmResource->resName);
 
     fout = safe_fopen(filename ,"w");
 
@@ -291,8 +291,8 @@ static void dumpTtm(struct TTtmResource *ttmResource)
     fprintf(fout, "\n ======== Tags list ========\n");
 
     for (int i=0; i < ttmResource->numTags; i++)
-        fprintf(fout, "%d : %s\n", ttmResource->tags[i].id,           \
-                                   ttmResource->tags[i].description );
+        fprintf(fout, "%d : %s\n", ttmResource->tags[i].id,
+                                   ttmResource->tags[i].description);
 
 
     fprintf(fout, "\n\n ======== TTM script ========\n");
@@ -325,159 +325,159 @@ static void dumpTtm(struct TTtmResource *ttmResource)
         switch (opcode) {
 
             case 0x001f:
-                fprintf( fout, "SAVE_BACKGROUND \n");
+                fprintf(fout, "SAVE_BACKGROUND \n");
                 break;
 
             case 0x0080:
-                fprintf( fout, "DRAW_BACKGROUND\n");
+                fprintf(fout, "DRAW_BACKGROUND\n");
                 break;
 
             case 0x0110:
-                fprintf( fout, "PURGE\n");
+                fprintf(fout, "PURGE\n");
                 break;
 
             case 0x0FF0:
-                fprintf( fout, "UPDATE\n");
+                fprintf(fout, "UPDATE\n");
                 break;
 
             case 0x1021:
-                fprintf( fout, "SET_DELAY %d\n", args[0]);
+                fprintf(fout, "SET_DELAY %d\n", args[0]);
                 break;
 
             case 0x1051:
-                fprintf( fout, "SET_BMP_SLOT %d\n", args[0]);
+                fprintf(fout, "SET_BMP_SLOT %d\n", args[0]);
                 break;
 
             case 0x1061:
-                fprintf( fout, "SET_PALETTE_SLOT %d\n", args[0]);
+                fprintf(fout, "SET_PALETTE_SLOT %d\n", args[0]);
                 break;
 
             case 0x1101:
-                fprintf( fout, "TTM_UNKNOWN_0 %d\n", args[0]);
+                fprintf(fout, "TTM_UNKNOWN_0 %d\n", args[0]);
                 break;
 
             case 0x1111:
-                fprintf( fout, "\nSET_SCENE %d\n", args[0]);
+                fprintf(fout, "\nSET_SCENE %d\n", args[0]);
                 break;
 
             case 0x1121:
-                fprintf( fout, "TTM_UNKNOWN_1 %d\n", args[0]);
+                fprintf(fout, "TTM_UNKNOWN_1 %d\n", args[0]);
                 break;
 
             case 0x1201:
-                fprintf( fout, "GOTO_TAG %d\n", args[0]);
+                fprintf(fout, "GOTO_TAG %d\n", args[0]);
                 break;
 
             case 0x2002:
-                fprintf( fout, "SET_COLORS %d %d\n", args[0], args[1]);
+                fprintf(fout, "SET_COLORS %d %d\n", args[0], args[1]);
                 break;
 
             case 0x2012:
-                fprintf( fout, "SET_FRAME1 %d %d\n", args[0], args[1]);
+                fprintf(fout, "SET_FRAME1 %d %d\n", args[0], args[1]);
                 break;
 
             case 0x2022:
-                fprintf( fout, "TIMER %d %d\n", args[0], args[1]);
+                fprintf(fout, "TIMER %d %d\n", args[0], args[1]);
                 break;
 
             case 0x4004:
-                fprintf( fout, "SET_CLIP_ZONE %d %d %d %d\n", args[0], args[1], args[2], args[3]);
+                fprintf(fout, "SET_CLIP_ZONE %d %d %d %d\n", args[0], args[1], args[2], args[3]);
                 break;
 
             case 0x4110:
-                fprintf( fout, "FADE_OUT \n");
+                fprintf(fout, "FADE_OUT \n");
                 break;
 
             case 0x4120:
-                fprintf( fout, "FADE_IN \n");
+                fprintf(fout, "FADE_IN \n");
                 break;
 
             case 0x4204:
-                fprintf( fout, "COPY_ZONE_TO_BG %d %d %d %d\n", args[0], args[1], args[2], args[3]);
+                fprintf(fout, "COPY_ZONE_TO_BG %d %d %d %d\n", args[0], args[1], args[2], args[3]);
                 break;
 
             case 0x4214:
-                fprintf( fout, "SAVE_IMAGE1 %d %d %d %d\n", args[0], args[1], args[2], args[3]);
+                fprintf(fout, "SAVE_IMAGE1 %d %d %d %d\n", args[0], args[1], args[2], args[3]);
                 break;
 
             case 0xA002:
-                fprintf( fout, "TTM_UNKNOWN_4 %d %d\n", args[0], args[1]);
+                fprintf(fout, "TTM_UNKNOWN_4 %d %d\n", args[0], args[1]);
                 break;
 
             case 0xA054:
-                fprintf( fout, "SAVE_ZONE %d %d %d %d\n", args[0], args[1], args[2], args[3]);
+                fprintf(fout, "SAVE_ZONE %d %d %d %d\n", args[0], args[1], args[2], args[3]);
                 break;
 
             case 0xA064:
-                fprintf( fout, "RESTORE_ZONE %d %d %d %d\n", args[0], args[1], args[2], args[3]);
+                fprintf(fout, "RESTORE_ZONE %d %d %d %d\n", args[0], args[1], args[2], args[3]);
                 break;
 
             case 0xA0A4:
-                fprintf( fout, "DRAW_LINE %d %d %d %d\n", args[0], args[1], args[2], args[3]);
+                fprintf(fout, "DRAW_LINE %d %d %d %d\n", args[0], args[1], args[2], args[3]);
                 break;
 
             case 0xA104:
-                fprintf( fout, "DRAW_RECT %d %d %d %d\n", args[0], args[1], args[2], args[3]);
+                fprintf(fout, "DRAW_RECT %d %d %d %d\n", args[0], args[1], args[2], args[3]);
                 break;
 
             case 0xA404:
-                fprintf( fout, "DRAW_CIRCLE %d %d %d %d\n", args[0], args[1], args[2], args[3]);
+                fprintf(fout, "DRAW_CIRCLE %d %d %d %d\n", args[0], args[1], args[2], args[3]);
                 break;
 
             case 0xA504:
-                fprintf( fout, "DRAW_SPRITE %d %d %d %d\n", args[0], args[1], args[2], args[3]);
+                fprintf(fout, "DRAW_SPRITE %d %d %d %d\n", args[0], args[1], args[2], args[3]);
                 break;
 
             case 0xA510:
-                fprintf( fout, "DRAW_SPRITE1 \n");
+                fprintf(fout, "DRAW_SPRITE1 \n");
                 break;
 
             case 0xA524:
-                fprintf( fout, "DRAW_SPRITE_FLIP %d %d %d %d\n", args[0], args[1], args[2], args[3]);
+                fprintf(fout, "DRAW_SPRITE_FLIP %d %d %d %d\n", args[0], args[1], args[2], args[3]);
                 break;
 
             case 0xA530:
-                fprintf( fout, "DRAW_SPRITE3 \n");
+                fprintf(fout, "DRAW_SPRITE3 \n");
                 break;
 
             case 0xA601:
-                fprintf( fout, "CLEAR_SCREEN %d\n", args[0]);
+                fprintf(fout, "CLEAR_SCREEN %d\n", args[0]);
                 break;
 
             case 0xB606:
-                fprintf( fout, "DRAW_SCREEN %d %d %d %d %d %d\n", args[0], args[1], args[2], args[3], args[4], args[5]);
+                fprintf(fout, "DRAW_SCREEN %d %d %d %d %d %d\n", args[0], args[1], args[2], args[3], args[4], args[5]);
                 break;
 
             case 0xC020:
-                fprintf( fout, "LOAD_SAMPLE \n");
+                fprintf(fout, "LOAD_SAMPLE \n");
                 break;
 
             case 0xC030:
-                fprintf( fout, "SELECT_SAMPLE \n");
+                fprintf(fout, "SELECT_SAMPLE \n");
                 break;
 
             case 0xC040:
-                fprintf( fout, "DESELECT_SAMPLE \n");
+                fprintf(fout, "DESELECT_SAMPLE \n");
                 break;
 
             case 0xC051:
-                fprintf( fout, "PLAY_SAMPLE %d\n", args[0]);
+                fprintf(fout, "PLAY_SAMPLE %d\n", args[0]);
                 break;
 
             case 0xC060:
-                fprintf( fout, "STOP_SAMPLE \n");
+                fprintf(fout, "STOP_SAMPLE \n");
                 break;
 
             case 0xF01F:
-                fprintf( fout, "LOAD_SCREEN %s\n", strArg);
+                fprintf(fout, "LOAD_SCREEN %s\n", strArg);
                 break;
 
             case 0xF02F:
-                fprintf( fout, "LOAD_IMAGE %s\n", strArg);
+                fprintf(fout, "LOAD_IMAGE %s\n", strArg);
                 break;
 
             case 0xF05F:
-                fprintf( fout, "LOAD_PALETTE %s\n", strArg);
+                fprintf(fout, "LOAD_PALETTE %s\n", strArg);
                 break;
         }
     }
@@ -490,16 +490,16 @@ void dumpAllResources()
 {
     createDumpDirs();
 
-    for ( int i = 0 ; i < numScrResources ; i++ )
+    for (int i = 0; i < numScrResources; i++)
         dumpScr(scrResources[i], palResources[0]);
 
-    for ( int i = 0 ; i < numBmpResources ; i++ )
+    for (int i = 0; i < numBmpResources; i++)
         dumpBmp(bmpResources[i], palResources[0]);
 
-    for ( int i = 0 ; i < numAdsResources ; i++ )
+    for (int i = 0; i < numAdsResources; i++)
         dumpAds(adsResources[i]);
 
-    for ( int i = 0 ; i < numTtmResources ; i++ )
+    for (int i = 0; i < numTtmResources; i++)
         dumpTtm(ttmResources[i]);
 }
 

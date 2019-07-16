@@ -196,7 +196,7 @@ static void adsAddScene(uint16 ttmSlotNo, uint16 ttmTag, uint16 arg3)
     while (ttmThreads[i].isRunning)
         i++;
 
-    struct TTtmThread *ttmThread = &ttmThreads[i]; //struct TTtmThread *ttmThread = ttmThreads + i;
+    struct TTtmThread *ttmThread = &ttmThreads[i];
 
     ttmThread->ttmSlot         = &ttmSlots[ttmSlotNo];
     ttmThread->isRunning       = 1;
@@ -482,7 +482,7 @@ static void adsPlayChunk(uint8 *data, uint32 dataSize, uint32 offset)
 
             case 0xf200:
                 peekUint16Block(data, &offset, args, 1);
-                debugMsg("GOSUB_TAG");    // ex UNKNOWN_8
+                debugMsg("GOSUB_TAG %d", args[0]);    // ex UNKNOWN_8
                 // "quick and dirty" implementation, sufficient for
                 // JCastaway : only encountered in STAND.ADS to tag 14
                 // which only contains 1 scene
@@ -514,7 +514,6 @@ static void adsPlayChunk(uint8 *data, uint32 dataSize, uint32 offset)
 
 static void adsPlayTriggeredChunks(uint8 *data, uint32 dataSize, uint16 ttmSlotNo, uint16 ttmTag)
 {
-
     // First we deal with the case where a local trigger was declared
     // (only one occurence of this, in ACTIVITY.ADS tag #7)
 
@@ -525,7 +524,6 @@ static void adsPlayTriggeredChunks(uint8 *data, uint32 dataSize, uint16 ttmSlotN
                 numAdsChunksLocal--;
             }
     }
-
 
     // Then, the general case
     else {
@@ -567,8 +565,8 @@ void adsPlay(char *adsName, uint16 adsTag)
     while (numThreads) {
 
         if (ttmBackgroundThread.isRunning && ttmBackgroundThread.timer == 0) {
-            ttmBackgroundThread.timer = ttmBackgroundThread.delay;
             debugMsg("    ------> Animate bg");
+            ttmBackgroundThread.timer = ttmBackgroundThread.delay;
             islandAnimate(&ttmBackgroundThread);
         }
 
@@ -691,7 +689,6 @@ void adsPlay(char *adsName, uint16 adsTag)
 
 void adsPlayBench()  // TODO - tempo
 {
-
     int numsLayers[] = { 1, 4, 8 };
 
     uint32 startTicks, counter;
@@ -707,7 +704,7 @@ void adsPlayBench()  // TODO - tempo
 
     benchInit(ttmSlots);
 
-    for (int j=0; j < 3 ; j++) {
+    for (int j=0; j < 3; j++) {
 
         int numLayers = numsLayers[j];
 

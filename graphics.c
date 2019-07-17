@@ -62,13 +62,20 @@ static void grReleaseSavedLayer()
 
 static void grPutPixel(SDL_Surface *sfc, uint16 x, uint16 y, uint8 color)
 {
-    uint8 *pixel = (uint8*) sfc->pixels;
+    // TODO: Implement Cohen-Sutherland or such for grDrawLine, and
+    // another ad hoc algorithm for grDrawCircle
 
-    pixel += (y * sfc->pitch) + (x * sizeof(uint32));
-    pixel[0] = ttmPalette[color][0];
-    pixel[1] = ttmPalette[color][1];
-    pixel[2] = ttmPalette[color][2];
-    pixel[3] = 0;
+    if (x>0 && y>0 && x<640 && y<480) {
+
+        uint8 *pixel = (uint8*) sfc->pixels;
+
+        pixel += (y * sfc->pitch) + (x * sizeof(uint32));
+
+        pixel[0] = ttmPalette[color][0];
+        pixel[1] = ttmPalette[color][1];
+        pixel[2] = ttmPalette[color][2];
+        pixel[3] = 0;
+    }
 }
 
 
@@ -253,7 +260,6 @@ void grDrawLine(SDL_Surface *sfc, sint16 x1, sint16 y1, sint16 x2, sint16 y2, ui
 
     SDL_LockSurface(sfc);
 
-// TODO check clipping
     // Bresenham's line drawing algorithm
     // Note : the code below intends to be pixel-perfect
 

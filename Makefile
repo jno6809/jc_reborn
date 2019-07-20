@@ -17,7 +17,8 @@ OBJ =   myscrantic.o \
         island.o \
         bench.o \
         graphics.o \
-        ticks.o
+        ticks.o \
+        config.o
 
 
 all: $(EXE)

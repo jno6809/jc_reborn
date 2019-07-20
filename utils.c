@@ -25,6 +25,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
+#include <time.h>
+#include <sys/time.h>
 
 #include "mytypes.h"
 
@@ -187,5 +189,16 @@ void hexdump(uint8 *data, uint32 len)
     }
 
     printf("\n");
+}
+
+
+int getDayOfYear()
+{
+    struct timeval tv;
+    struct tm *localTime;
+
+    gettimeofday(&tv, NULL);
+    localTime = localtime(&tv.tv_sec);
+    return localTime->tm_yday;
 }
 

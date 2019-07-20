@@ -29,6 +29,7 @@
 #include "ttm.h"
 #include "ads.h"
 #include "island.h"
+#include "config.h"
 #include "story.h"
 
 
@@ -166,6 +167,35 @@ static struct TStoryScene *storyPickScene(
 }
 
 
+static void storyUpdateCurrentDay()
+{
+    struct TConfig config;
+    int today;
+    int hasChanged = 0;
+
+    cfgFileRead(&config);
+    today = getDayOfYear();
+
+    if (today != config.date) {
+        debugMsg("System date has changed since last sequence -> next day of the story");
+        config.date = today;
+        config.currentDay += 1;
+        hasChanged = 1;
+    }
+
+    if (config.currentDay < 1 || config.currentDay > 11) {
+        config.currentDay = 1;
+        hasChanged = 1;
+    }
+
+    if (hasChanged)
+        cfgFileWrite(&config);
+
+    storyCurrentDay = config.currentDay;
+    debugMsg("The day of the story is: %d", storyCurrentDay);
+}
+
+
 static void storyCalculateIslandFromDateAndTime()
 {
     // Night ?
@@ -249,8 +279,8 @@ void storyPlay()
 
     while (1) {
 
+        storyUpdateCurrentDay();
         storyCalculateIslandFromDateAndTime();
-
         unwantedFlags = 0;
 
         if (islandState.holiday)

@@ -37,14 +37,26 @@
 #include "bench.h"
 #include "ads.h"
 
-#define MAX_RANDOM_SCENES     10
+
+#define MAX_RANDOM_OPS        10
 #define MAX_ADS_CHUNKS        100
 #define MAX_ADS_CHUNKS_LOCAL  1
 
+#define OP_ADD_SCENE   0
+#define OP_STOP_SCENE  1
+#define OP_NOP         2
 
-struct TAdsChunk {   // TODO should not be here
+
+struct TAdsChunk {           // TODO should not be here
     struct TAdsScene scene;
     uint32 offset;
+};
+
+struct TAdsRandOp {          // TODO should not be here
+    int    type;
+    uint16 slot;
+    uint16 tag;
+    uint16 numPlays;
 };
 
 
@@ -67,8 +79,8 @@ static struct TAdsChunk adsChunks[MAX_ADS_CHUNKS];
 static struct TTtmTag *adsTags;
 static int    adsNumTags = 0;
 
-static struct TAdsScene adsRandomScenes[MAX_RANDOM_SCENES];
-static int    adsNumRandomScenes = 0;
+static struct TAdsRandOp adsRandOps[MAX_RANDOM_OPS];
+static int    adsNumRandOps    = 0;
 
 static int    numThreads       = 0;
 static int    adsStopRequested = 0;
@@ -273,29 +285,66 @@ static int isSceneRunning(uint16 ttmSlotNo, uint16 ttmTag)
 
 static void adsRandomStart()
 {
-    // TODO : maybe stop any previously running thread ?
-    adsNumRandomScenes = 0;
+    adsNumRandOps = 0;
 }
 
 
-static void adsRandomAddScene(uint16 ttmSlotNo, uint16 ttmTag)
+static void adsRandomAddScene(uint16 ttmSlotNo, uint16 ttmTag, uint16 numPlays)
 {
-   adsRandomScenes[adsNumRandomScenes].slot = ttmSlotNo;
-   adsRandomScenes[adsNumRandomScenes].tag  = ttmTag;
-   adsNumRandomScenes++;
+   adsRandOps[adsNumRandOps].type      = OP_ADD_SCENE;
+   adsRandOps[adsNumRandOps].slot      = ttmSlotNo;
+   adsRandOps[adsNumRandOps].tag       = ttmTag;
+   adsRandOps[adsNumRandOps].numPlays  = numPlays;
+   adsNumRandOps++;
+}
+
+
+static void adsRandomStopSceneByTtmTag(uint16 ttmSlotNo, uint16 ttmTag)
+{
+   adsRandOps[adsNumRandOps].type      = OP_STOP_SCENE;
+   adsRandOps[adsNumRandOps].slot      = ttmSlotNo;
+   adsRandOps[adsNumRandOps].tag       = ttmTag;
+   adsRandOps[adsNumRandOps].numPlays  = 0;
+   adsNumRandOps++;
+}
+
+
+static void adsRandomNop()
+{
+   adsRandOps[adsNumRandOps].type      = OP_NOP;
+   adsRandOps[adsNumRandOps].slot      = 0;
+   adsRandOps[adsNumRandOps].tag       = 0;
+   adsRandOps[adsNumRandOps].numPlays  = 0;
+   adsNumRandOps++;
 }
 
 
 static void adsRandomEnd()
 {
-   if (adsNumRandomScenes) {
-       int i = rand() % adsNumRandomScenes;
-       debugMsg("RANDOM : chose scene %d %d", adsRandomScenes[i].slot, adsRandomScenes[i].tag);
-       adsAddScene(adsRandomScenes[i].slot, adsRandomScenes[i].tag, adsRandomScenes[i].numPlays);
-   }
-   else {
-       debugMsg("RANDOM : no scene to choose from");
-   }
+    if (adsNumRandOps) {
+
+       struct TAdsRandOp *op = &adsRandOps[rand() % adsNumRandOps];
+
+       switch (op->type) {
+
+           case OP_ADD_SCENE:
+               debugMsg("RANDOM : chose ADD_SCENE %d %d", op->slot, op->tag);
+               adsAddScene(op->slot, op->tag, op->numPlays);
+               break;
+
+           case OP_STOP_SCENE:
+               debugMsg("RANDOM : chose STOP_SCENE %d %d", op->slot, op->tag);
+               adsStopSceneByTtmTag(op->slot, op->tag);
+               break;
+
+           default:
+               debugMsg("RANDOM : chose NOP");
+               break;
+       }
+    }
+    else {
+        debugMsg("RANDOM : no operation to choose from");
+    }
 }
 
 
@@ -352,8 +401,8 @@ static void adsPlayChunk(uint8 *data, uint32 dataSize, uint32 offset)
         switch (opcode) {
 
             case 0x1070:
-                // Inside a RANDOM block, IF_LASTPLAYED which overrides
-                // the global IF_LASTPLAYEDs.
+                // Inside an IF_LASTPLAYED chunk, local IF_LASTPLAYED
+                // which overrides the global IF_LASTPLAYEDs.
                 peekUint16Block(data, &offset, args, 2);
                 debugMsg("IF_LASTPLAYED_LOCAL");
                 inIfLastplayedLocal = 1;
@@ -386,18 +435,19 @@ static void adsPlayChunk(uint8 *data, uint32 dataSize, uint32 offset)
 
             case 0x1360:
                 peekUint16Block(data, &offset, args, 2);
-                debugMsg("IF_SKIP_NEXT2 %d %d", args[0], args[1]);
-                inSkipBlock = 1;
+                debugMsg("IF_NOT_RUNNING %d %d", args[0], args[1]);
+                if (isSceneRunning(args[0], args[1]))
+                    inSkipBlock = 1;
                 break;
 
             case 0x1370:
                 peekUint16Block(data, &offset, args, 2);
                 debugMsg("IF_IS_RUNNING %d %d", args[0], args[1]);
-                inSkipBlock = ! isSceneRunning(args[0], args[1]);
+                inSkipBlock = !isSceneRunning(args[0], args[1]);
                 break;
 
             case 0x1420:
-                debugMsg("OR_UNKNOWN_3");  // the OR of IF_SKIP_NEXT_2
+                debugMsg("AND");
                 break;
 
             case 0x1430:
@@ -437,7 +487,7 @@ static void adsPlayChunk(uint8 *data, uint32 dataSize, uint32 offset)
 
                 if (!inSkipBlock) {               // TODO - TEMPO
                     if (inRandBlock)
-                        adsRandomAddScene(args[0],args[1]);
+                        adsRandomAddScene(args[0],args[1],args[2]);
                     else
                         adsAddScene(args[0],args[1],args[2]);
                 }
@@ -448,8 +498,12 @@ static void adsPlayChunk(uint8 *data, uint32 dataSize, uint32 offset)
                 peekUint16Block(data, &offset, args, 3);
                 debugMsg("STOP_SCENE %d %d %d", args[0], args[1], args[2]);
 
-                if (!inSkipBlock)                // TODO - TEMPO
-                    adsStopSceneByTtmTag(args[0], args[1]);
+                if (!inSkipBlock) {              // TODO - TEMPO
+                    if (inRandBlock)
+                        adsRandomStopSceneByTtmTag(args[0], args[1]);
+                    else
+                        adsStopSceneByTtmTag(args[0], args[1]);
+                }
 
                 break;
 
@@ -461,8 +515,9 @@ static void adsPlayChunk(uint8 *data, uint32 dataSize, uint32 offset)
 
             case 0x3020:
                 peekUint16Block(data, &offset, args, 1);
-                debugMsg("RANDOM_UNKNOWN_0");   // cf. ACTIVITY.ADS:1 , = when swimming back to island
-                                                // associated to IF_SKIP_NEXT2 and OR_UNKNOWN_3
+                debugMsg("NOP");
+                if (inRandBlock)
+                    adsRandomNop("NOP");
                 break;
 
             case 0x30ff:

@@ -235,9 +235,9 @@ static void dumpAds(struct TAdsResource *adsResource)
             case 0x1070: fprintf(fout, "IF_LASTPLAYED_LOCAL"); numArgs=2; break;
             case 0x1330: fprintf(fout, "IF_UNKNOWN_1"); numArgs=2; break;
             case 0x1350: fprintf(fout, "IF_LASTPLAYED"); numArgs=2; break;
-            case 0x1360: fprintf(fout, "IF_SKIP_NEXT2"); numArgs=2; break;
+            case 0x1360: fprintf(fout, "IF_NOT_RUNNING"); numArgs=2; break;
             case 0x1370: fprintf(fout, "IF_IS_RUNNING"); numArgs=2; break;
-            case 0x1420: fprintf(fout, "OR_UNKNOWN_3"); numArgs=0; break;
+            case 0x1420: fprintf(fout, "AND"); numArgs=0; break;
             case 0x1430: fprintf(fout, "OR"); numArgs=0; break;
             case 0x1510: fprintf(fout, "PLAY_SCENE"); numArgs=0; break;
             case 0x1520: fprintf(fout, "ADD_SCENE_LOCAL"); numArgs=5; break;
@@ -245,7 +245,7 @@ static void dumpAds(struct TAdsResource *adsResource)
             case 0x2010: fprintf(fout, "STOP_SCENE"); numArgs=3; break;
             case 0x2014: fprintf(fout, "UNKNOWN_5"); numArgs=0; break;
             case 0x3010: fprintf(fout, "RANDOM_START"); numArgs=0; break;
-            case 0x3020: fprintf(fout, "RANDOM_UNKNOWN_0"); numArgs=1; break;
+            case 0x3020: fprintf(fout, "NOP"); numArgs=1; break;
             case 0x30ff: fprintf(fout, "RANDOM_END"); numArgs=0; break;
             case 0x4000: fprintf(fout, "UNKNOWN_6"); numArgs=3; break;
             case 0xf010: fprintf(fout, "FADE_OUT"); numArgs=0; break;

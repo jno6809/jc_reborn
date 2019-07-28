@@ -33,7 +33,7 @@
 #include "story.h"
 
 
-#define NUM_SCENES    48
+#define NUM_SCENES    50
 
 #define FINAL         0x01
 #define FIRST         0x02
@@ -67,11 +67,11 @@ static int storyCurrentDay = 1;
 
 static struct TStoryScene storyScenes[NUM_SCENES] = {
 
-//  { "ACTIVITY.ADS",  1,       0,      0,  0,  ISLAND                                                    },  // bugged, loops indefinitely, too
+    { "ACTIVITY.ADS",  1,  SPOT_E,      0,  0,  ISLAND | FINAL | VARPOS_OK                                },
     { "ACTIVITY.ADS", 12,  SPOT_x, SPOT_x,  0,  ISLAND | FINAL                                            },
     { "ACTIVITY.ADS", 11,       0,      0,  0,  ISLAND | FINAL | FIRST | VARPOS_OK                        },
     { "ACTIVITY.ADS", 10,  SPOT_D,      0,  0,  ISLAND | FINAL                                            },
-//  { "ACTIVITY.ADS",  4,  SPOT_E, SPOT_E,  0,  FINAL | VARPOS_OK                                         },  // bugged, loops indefinitely
+    { "ACTIVITY.ADS",  4,  SPOT_E, SPOT_E,  0,  ISLAND | VARPOS_OK                                        },
     { "ACTIVITY.ADS",  5,  SPOT_x, SPOT_x,  0,  ISLAND | FINAL                                            },
     { "ACTIVITY.ADS",  6,  SPOT_D,      0,  0,  ISLAND | FINAL | VARPOS_OK                                },
     { "ACTIVITY.ADS",  7,  SPOT_D, SPOT_F,  0,  ISLAND | LOWTIDE_OK                                       },

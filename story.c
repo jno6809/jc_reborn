@@ -33,7 +33,7 @@
 #include "story.h"
 
 
-#define NUM_SCENES    50
+#define NUM_SCENES    62
 
 #define FINAL         0x01
 #define FIRST         0x02
@@ -113,20 +113,20 @@ static struct TStoryScene storyScenes[NUM_SCENES] = {
     { "MISCGAG.ADS" ,  1,  SPOT_x, SPOT_x,  0,  ISLAND | FINAL                                            },
     { "MISCGAG.ADS" ,  2,  SPOT_D,      0,  0,  ISLAND | FINAL                                            },
 
-//  { "STAND.ADS"   ,  1,  SPOT_x, SPOT_x,  0,  ISLAND                                                    },
-//  { "STAND.ADS"   ,  2,  SPOT_x, SPOT_x,  0,  ISLAND                                                    },
-//  { "STAND.ADS"   ,  3,  SPOT_x, SPOT_x,  0,  ISLAND                                                    },
-//  { "STAND.ADS"   ,  4,  SPOT_x, SPOT_x,  0,  ISLAND                                                    },
-//  { "STAND.ADS"   ,  5,  SPOT_x, SPOT_x,  0,  ISLAND                                                    },
-//  { "STAND.ADS"   ,  6,  SPOT_x, SPOT_x,  0,  ISLAND                                                    },
-//  { "STAND.ADS"   ,  7,  SPOT_x, SPOT_x,  0,  ISLAND                                                    },
-//  { "STAND.ADS"   ,  8,  SPOT_x, SPOT_x,  0,  ISLAND                                                    },
-//  { "STAND.ADS"   ,  9,  SPOT_x, SPOT_x,  0,  ISLAND                                                    },
-//  { "STAND.ADS"   , 10,  SPOT_x, SPOT_x,  0,  ISLAND                                                    },
-//  { "STAND.ADS"   , 11,  SPOT_x, SPOT_x,  0,  ISLAND                                                    },
-//  { "STAND.ADS"   , 12,  SPOT_x, SPOT_x,  0,  ISLAND                                                    },
-    { "STAND.ADS"   , 15,  SPOT_x, SPOT_x,  0,  ISLAND | VARPOS_OK | LOWTIDE_OK                           },
-    { "STAND.ADS"   , 16,  SPOT_x, SPOT_x,  0,  ISLAND | VARPOS_OK | LOWTIDE_OK                           },
+    { "STAND.ADS"   ,  1,  SPOT_A, SPOT_A,  0,  ISLAND | VARPOS_OK | LOWTIDE_OK                           },
+    { "STAND.ADS"   ,  2,  SPOT_A, SPOT_A,  0,  ISLAND | VARPOS_OK | LOWTIDE_OK                           },
+    { "STAND.ADS"   ,  3,  SPOT_A, SPOT_A,  0,  ISLAND | VARPOS_OK | LOWTIDE_OK                           },
+    { "STAND.ADS"   ,  4,  SPOT_B, SPOT_B,  0,  ISLAND | VARPOS_OK | LOWTIDE_OK                           },
+    { "STAND.ADS"   ,  5,  SPOT_B, SPOT_B,  0,  ISLAND | VARPOS_OK | LOWTIDE_OK                           },
+    { "STAND.ADS"   ,  6,  SPOT_B, SPOT_B,  0,  ISLAND | VARPOS_OK | LOWTIDE_OK                           },
+    { "STAND.ADS"   ,  7,  SPOT_C, SPOT_C,  0,  ISLAND | VARPOS_OK | LOWTIDE_OK                           },
+    { "STAND.ADS"   ,  8,  SPOT_C, SPOT_C,  0,  ISLAND | VARPOS_OK | LOWTIDE_OK                           },
+    { "STAND.ADS"   ,  9,  SPOT_D, SPOT_D,  0,  ISLAND | VARPOS_OK | LOWTIDE_OK                           },
+    { "STAND.ADS"   , 10,  SPOT_D, SPOT_D,  0,  ISLAND | VARPOS_OK | LOWTIDE_OK                           },
+    { "STAND.ADS"   , 11,  SPOT_E, SPOT_E,  0,  ISLAND | VARPOS_OK | LOWTIDE_OK                           },
+    { "STAND.ADS"   , 12,  SPOT_F, SPOT_F,  0,  ISLAND | VARPOS_OK | LOWTIDE_OK                           },
+    { "STAND.ADS"   , 15,  SPOT_A, SPOT_A,  0,  ISLAND | VARPOS_OK | LOWTIDE_OK                           },
+    { "STAND.ADS"   , 16,  SPOT_C, SPOT_C,  0,  ISLAND | VARPOS_OK | LOWTIDE_OK                           },
 
     { "SUZY.ADS"    ,  1,       0,      0,  3,  FINAL | FIRST                                             },
     { "SUZY.ADS"    ,  2,       0,      0,  9,  FINAL | FIRST                                             },

@@ -91,12 +91,14 @@ static void adsLoad(uint8 *data, uint32 dataSize, uint16 numTags, uint16 tag, ui
     uint32 offset = 0;
     uint16 args[10];
     int bookmarkingChunks = 0;
+    int bookmarkingIfNotRunnings = 0;
 
     numAdsChunks      = 0;
     numAdsChunksLocal = 0;
     *tagOffset        = 0;
     adsNumTags        = 0;
     adsTags           = safe_malloc(numTags * sizeof(struct TTtmTag));
+
 
     while (offset < dataSize) {
 
@@ -105,7 +107,9 @@ static void adsLoad(uint8 *data, uint32 dataSize, uint16 numTags, uint16 tag, ui
         switch (opcode) {
 
             case 0x1350:     // IF_LASTPLAYED
+
                 if (bookmarkingChunks) {
+                    bookmarkingIfNotRunnings = 0;
                     peekUint16Block(data, &offset, args, 2);
                     adsChunks[numAdsChunks].scene.slot = args[0];
                     adsChunks[numAdsChunks].scene.tag  = args[1];
@@ -115,12 +119,34 @@ static void adsLoad(uint8 *data, uint32 dataSize, uint16 numTags, uint16 tag, ui
                 else {
                     offset += 2<<1;
                 }
+
+                break;
+
+            case 0x1360:     // IF_NOT_RUNNING
+
+                // We only bookmark the IF_NOT_RUNNINGs
+                // preceding the first IF_LAST_PLAYED or IF_IS_RUNNING
+
+                if (bookmarkingChunks && bookmarkingIfNotRunnings) {
+                    peekUint16Block(data, &offset, args, 2);
+                    adsChunks[numAdsChunks].scene.slot = args[0];
+                    adsChunks[numAdsChunks].scene.tag  = args[1];
+                    adsChunks[numAdsChunks].offset     = offset;
+                    numAdsChunks++;
+                }
+                else {
+                    offset += 2<<1;
+                }
+
+                break;
+
+            case 0x1370:     // IF_IS_RUNNING
+                bookmarkingIfNotRunnings = 0;
+                offset += 2<<1;
                 break;
 
             case 0x1070: offset += 2<<1; break;
             case 0x1330: offset += 2<<1; break;
-            case 0x1360: offset += 2<<1; break;
-            case 0x1370: offset += 2<<1; break;
             case 0x1420: offset += 0<<1; break;
             case 0x1430: offset += 0<<1; break; // OR   // TODO : manage here if_lastplayed OK tags ?
             case 0x1510: offset += 0<<1; break;
@@ -145,9 +171,11 @@ static void adsLoad(uint8 *data, uint32 dataSize, uint16 numTags, uint16 tag, ui
                 if (opcode == tag) {
                     *tagOffset = offset;
                     bookmarkingChunks = 1;
+                    bookmarkingIfNotRunnings = 1;
                 }
                 else {
                     bookmarkingChunks = 0;
+                    bookmarkingIfNotRunnings = 0;
                 }
 
                 break;
@@ -456,9 +484,13 @@ static void adsPlayChunk(uint8 *data, uint32 dataSize, uint32 offset)
                 break;
 
             case 0x1510:
+                // PLAY_SCENE : in fact, sort of a 'closing brace' for a
+                // statement block (several types possible).
+                // TODO : implement that in a cleaner way.
+                // For now, works quite well like that though...
                 debugMsg("PLAY_SCENE");
                 if (inSkipBlock)
-                    inSkipBlock = 0;    // TODO ?
+                    inSkipBlock = 0;
                 else
                     continueLoop = 0;
                 break;

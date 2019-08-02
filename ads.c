@@ -57,6 +57,7 @@ struct TAdsRandOp {          // TODO should not be here
     uint16 slot;
     uint16 tag;
     uint16 numPlays;
+    uint16 weight;
 };
 
 
@@ -311,39 +312,68 @@ static int isSceneRunning(uint16 ttmSlotNo, uint16 ttmTag)
 }
 
 
+static struct TAdsRandOp *adsRandomPickOp()
+{
+    int totalWeight = 0;
+    int partialWeight = 0;
+    int res;
+
+
+    // Pick in a list of weighted elements
+
+    for (int i=0; i < adsNumRandOps; i++)
+        totalWeight += adsRandOps[i].weight;
+
+    int a = rand() % totalWeight;
+
+    for (res=0; res < adsNumRandOps; res++) {
+        partialWeight += adsRandOps[res].weight;
+        if (a < partialWeight)
+            break;
+    }
+
+    return &adsRandOps[res];
+}
+
+
 static void adsRandomStart()
 {
     adsNumRandOps = 0;
 }
 
 
-static void adsRandomAddScene(uint16 ttmSlotNo, uint16 ttmTag, uint16 numPlays)
+static void adsRandomAddScene(uint16 ttmSlotNo, uint16 ttmTag, uint16 numPlays,
+                              uint16 weight)
 {
-   adsRandOps[adsNumRandOps].type      = OP_ADD_SCENE;
-   adsRandOps[adsNumRandOps].slot      = ttmSlotNo;
-   adsRandOps[adsNumRandOps].tag       = ttmTag;
-   adsRandOps[adsNumRandOps].numPlays  = numPlays;
-   adsNumRandOps++;
+    adsRandOps[adsNumRandOps].type      = OP_ADD_SCENE;
+    adsRandOps[adsNumRandOps].slot      = ttmSlotNo;
+    adsRandOps[adsNumRandOps].tag       = ttmTag;
+    adsRandOps[adsNumRandOps].numPlays  = numPlays;
+    adsRandOps[adsNumRandOps].weight    = weight;
+    adsNumRandOps++;
 }
 
 
-static void adsRandomStopSceneByTtmTag(uint16 ttmSlotNo, uint16 ttmTag)
+static void adsRandomStopSceneByTtmTag(uint16 ttmSlotNo, uint16 ttmTag,
+                                       uint16 weight)
 {
-   adsRandOps[adsNumRandOps].type      = OP_STOP_SCENE;
-   adsRandOps[adsNumRandOps].slot      = ttmSlotNo;
-   adsRandOps[adsNumRandOps].tag       = ttmTag;
-   adsRandOps[adsNumRandOps].numPlays  = 0;
-   adsNumRandOps++;
+    adsRandOps[adsNumRandOps].type      = OP_STOP_SCENE;
+    adsRandOps[adsNumRandOps].slot      = ttmSlotNo;
+    adsRandOps[adsNumRandOps].tag       = ttmTag;
+    adsRandOps[adsNumRandOps].numPlays  = 0;
+    adsRandOps[adsNumRandOps].weight    = weight;
+    adsNumRandOps++;
 }
 
 
-static void adsRandomNop()
+static void adsRandomNop(uint16 weight)
 {
-   adsRandOps[adsNumRandOps].type      = OP_NOP;
-   adsRandOps[adsNumRandOps].slot      = 0;
-   adsRandOps[adsNumRandOps].tag       = 0;
-   adsRandOps[adsNumRandOps].numPlays  = 0;
-   adsNumRandOps++;
+    adsRandOps[adsNumRandOps].type      = OP_NOP;
+    adsRandOps[adsNumRandOps].slot      = 0;
+    adsRandOps[adsNumRandOps].tag       = 0;
+    adsRandOps[adsNumRandOps].numPlays  = 0;
+    adsRandOps[adsNumRandOps].weight    = weight;
+    adsNumRandOps++;
 }
 
 
@@ -351,7 +381,7 @@ static void adsRandomEnd()
 {
     if (adsNumRandOps) {
 
-       struct TAdsRandOp *op = &adsRandOps[rand() % adsNumRandOps];
+       struct TAdsRandOp *op = adsRandomPickOp();
 
        switch (op->type) {
 
@@ -519,7 +549,7 @@ static void adsPlayChunk(uint8 *data, uint32 dataSize, uint32 offset)
 
                 if (!inSkipBlock) {               // TODO - TEMPO
                     if (inRandBlock)
-                        adsRandomAddScene(args[0],args[1],args[2]);
+                        adsRandomAddScene(args[0],args[1],args[2], args[3]);
                     else
                         adsAddScene(args[0],args[1],args[2]);
                 }
@@ -532,7 +562,7 @@ static void adsPlayChunk(uint8 *data, uint32 dataSize, uint32 offset)
 
                 if (!inSkipBlock) {              // TODO - TEMPO
                     if (inRandBlock)
-                        adsRandomStopSceneByTtmTag(args[0], args[1]);
+                        adsRandomStopSceneByTtmTag(args[0], args[1], args[2]);
                     else
                         adsStopSceneByTtmTag(args[0], args[1]);
                 }
@@ -549,7 +579,7 @@ static void adsPlayChunk(uint8 *data, uint32 dataSize, uint32 offset)
                 peekUint16Block(data, &offset, args, 1);
                 debugMsg("NOP");
                 if (inRandBlock)
-                    adsRandomNop("NOP");
+                    adsRandomNop(args[0]);
                 break;
 
             case 0x30ff:

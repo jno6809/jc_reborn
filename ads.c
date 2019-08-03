@@ -785,10 +785,9 @@ void adsPlay(char *adsName, uint16 adsTag)
 
                     // Is there one (or more) IF_LASTPLAYED matching the terminated thread ?
                     else {
+                        adsStopScene(i);
                         if (!adsStopRequested)
                             adsPlayTriggeredChunks(data, dataSize, ttmThreads[i].sceneSlot, ttmThreads[i].sceneTag);
-
-                        adsStopScene(i);
                     }
                 }
             }

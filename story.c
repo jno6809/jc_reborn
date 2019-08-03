@@ -326,6 +326,9 @@ void storyPlay()
             ttmDx = islandState.xPos + (finalScene->flags & LEFT_ISLAND ? 272 : 0);
             ttmDy = islandState.yPos;
         }
+        else {
+            ttmDx = ttmDy = 0;
+        }
 
         adsPlay(finalScene->adsName, finalScene->adsTagNo);
 

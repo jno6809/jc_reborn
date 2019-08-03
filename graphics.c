@@ -174,10 +174,11 @@ void graphicsUpdate(struct TTtmThread *ttmBackgroundThread,
 
     // Finally, blit the holiday layer
     if (ttmHolidayThread != NULL)
-        SDL_BlitSurface(ttmHolidayThread->ttmLayer,
-                        NULL,
-                        SDL_GetWindowSurface(sdl_window),
-                        NULL);
+        if (ttmHolidayThread->isRunning)
+            SDL_BlitSurface(ttmHolidayThread->ttmLayer,
+                            NULL,
+                            SDL_GetWindowSurface(sdl_window),
+                            NULL);
 
 
     SDL_UpdateWindowSurface(sdl_window);

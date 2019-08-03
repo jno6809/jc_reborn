@@ -192,6 +192,8 @@ void islandInitHoliday(struct TTtmThread *ttmThread)
 
     if (islandState.holiday) {
 
+        ttmThread->isRunning = 3;
+
         grDx = islandState.xPos;
         grDy = islandState.yPos;
 
@@ -205,6 +207,9 @@ void islandInitHoliday(struct TTtmThread *ttmThread)
         }
 
         grReleaseBmp(ttmSlot,0);
+    }
+    else {
+        ttmThread->isRunning = 0;
     }
 }
 

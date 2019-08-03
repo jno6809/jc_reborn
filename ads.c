@@ -901,7 +901,9 @@ void adsNoIsland()
     grInitEmptyBackground();
 
     ttmHolidayThread.isRunning = 0;
-    grFreeLayer(ttmHolidayThread.ttmLayer);
+
+    if (ttmHolidayThread.ttmLayer != NULL)
+        grFreeLayer(ttmHolidayThread.ttmLayer);
 }
 
 

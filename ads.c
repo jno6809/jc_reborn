@@ -840,7 +840,7 @@ void adsPlayBench()  // TODO - tempo
             counter++;
         }
 
-        printf(" %d-layers test --> %ld fps\n", numLayers, counter/3);
+        printf(" %d-layers test --> %d fps\n", numLayers, counter/3);
     }
 
     for (int i=0; i < 8; i++)

@@ -69,7 +69,7 @@ static void grPutPixel(SDL_Surface *sfc, uint16 x, uint16 y, uint8 color)
 
         uint8 *pixel = (uint8*) sfc->pixels;
 
-        pixel += (y * sfc->pitch) + (x * sizeof(uint32));
+        pixel += (y * sfc->pitch) + (x * sfc->format->BytesPerPixel);
 
         pixel[0] = ttmPalette[color][0];
         pixel[1] = ttmPalette[color][1];

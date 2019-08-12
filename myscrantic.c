@@ -177,5 +177,7 @@ int main(int argc, char **argv)
 
         graphicsEnd();
     }
+
+    return 0;
 }
 

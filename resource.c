@@ -343,7 +343,7 @@ static void parseMapFile(char *fileName)
 {
     FILE *f_map; // , *f_res;  // TODO
 
-    f_map = fopen(fileName,"r");
+    f_map = fopen(fileName,"rb");
 
     if (f_map == NULL)
         fatalError("Resources map file not found: %s\n", fileName);
@@ -374,7 +374,7 @@ static void parseResourceFile(char * filename)
 {
     FILE *f;
 
-    f = fopen(mapFile.resFileName,"r");
+    f = fopen(mapFile.resFileName,"rb");
 
     if (f == NULL)
         fatalError("Main resources file not found: %s\n", mapFile.resFileName);

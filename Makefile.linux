@@ -1,5 +1,5 @@
 
-CFLAGS=-Wall -Wpedantic
+CFLAGS=-Wall -Wpedantic -std=c99
 
 LDLIBS=-lSDL2
 

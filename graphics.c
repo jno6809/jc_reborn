@@ -22,6 +22,7 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 #include <SDL2/SDL.h>
 

@@ -1,0 +1,32 @@
+
+CFLAGS=-I/include/ -Wall --std=c99
+
+LDFLAGS=-L/lib/
+
+LDLIBS=-lmingw32 -lSDL2main -lSDL2
+
+EXE =   myscrantic
+
+OBJ =   myscrantic.o \
+        utils.o \
+        uncompress.o \
+        resource.o \
+        dump.o \
+        story.o \
+        walk.o \
+        ads.o \
+        ttm.o \
+        island.o \
+        bench.o \
+        graphics.o \
+        ticks.o \
+        config.o
+
+
+all: $(EXE)
+
+$(EXE): $(OBJ)
+
+clean:
+	rm -v $(OBJ) $(EXE) 2> /dev/null ; true
+

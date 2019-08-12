@@ -46,10 +46,16 @@ static void safe_mkdir(char *dirname)
     int res=0;
 
 
-    if (!stat(dirname, &st))
+    if (!stat(dirname, &st)) {
         fatalError("directory %s already exists", dirname);
-    else
+    }
+    else {
+#ifdef __WIN32__
+        res = mkdir(dirname);
+#else
         res = mkdir(dirname, 0755);
+#endif
+    }
 
     if (res)
         fatalError("couldn't create directory %s", dirname);

@@ -21,6 +21,9 @@
  *
  */
 
+#include <stdlib.h>
+#include <stdio.h>
+
 #include "mytypes.h"
 #include "graphics.h"
 #include "island.h"

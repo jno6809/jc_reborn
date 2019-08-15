@@ -23,6 +23,7 @@
 
 void adsInit();
 void adsInitIsland();
+void adsReleaseIsland();
 void adsNoIsland();
 void adsPlay(char *adsName, uint16 adsTag);
 void adsPlayIntro();

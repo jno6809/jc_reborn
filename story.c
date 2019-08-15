@@ -333,6 +333,9 @@ void storyPlay()
         adsPlay(finalScene->adsName, finalScene->adsTagNo);
 
         grFadeOut();
+
+        if (finalScene->flags & ISLAND)
+            adsReleaseIsland();
     }
 }
 

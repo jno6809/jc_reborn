@@ -416,6 +416,8 @@ void adsInit()    // Init slots and threads for TTM scripts  // TODO : rename
         ttmThreads[i].timer     = 0;
     }
 
+    ttmBackgroundThread.isRunning = 0;
+    ttmHolidayThread.isRunning    = 0;
     numThreads = 0;
     adsStopRequested = 0;
 }
@@ -437,7 +439,7 @@ void adsPlaySingleTtm(char *ttmName)  // TODO - tempo
     }
 
     adsStopScene(0);
-    ttmResetSlot(ttmSlots);
+    ttmResetSlot(&ttmSlots[0]);
 }
 
 
@@ -846,7 +848,7 @@ void adsPlayBench()  // TODO - tempo
     for (int i=0; i < 8; i++)
         adsStopScene(i);
 
-    ttmResetSlot(ttmSlots);
+    ttmResetSlot(&ttmSlots[0]);
 }
 
 
@@ -858,7 +860,7 @@ void adsPlayIntro()
     graphicsUpdate(NULL, ttmThreads, NULL);
     ticksWait(100);
     grFadeOut();
-    ttmResetSlot(ttmSlots);
+    ttmResetSlot(&ttmSlots[0]);
 }
 
 
@@ -882,28 +884,30 @@ void adsInitIsland()
     ttmInitSlot(&ttmHolidaySlot);
 
     ttmHolidayThread.ttmSlot   = &ttmHolidaySlot;
-    ttmHolidayThread.isRunning = 3;
+    ttmHolidayThread.isRunning = 0;
     ttmHolidayThread.delay     = 0;
     ttmHolidayThread.timer     = 0;
 
-    ttmHolidayThread.ttmLayer  = grNewLayer();
-
     islandInitHoliday(&ttmHolidayThread);
+}
+
+
+void adsReleaseIsland()
+{
+    ttmBackgroundThread.isRunning = 0;
+    ttmResetSlot(&ttmBackgroundSlot);
+
+    if (ttmHolidayThread.isRunning) {
+        ttmHolidayThread.isRunning = 0;
+        grFreeLayer(ttmHolidayThread.ttmLayer);
+    }
 }
 
 
 void adsNoIsland()
 {
     grDx = grDy = 0;
-
-    ttmBackgroundThread.isRunning = 0;
-    ttmResetSlot(&ttmBackgroundSlot);
     grInitEmptyBackground();
-
-    ttmHolidayThread.isRunning = 0;
-
-    if (ttmHolidayThread.ttmLayer != NULL)
-        grFreeLayer(ttmHolidayThread.ttmLayer);
 }
 
 

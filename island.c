@@ -195,6 +195,7 @@ void islandInitHoliday(struct TTtmThread *ttmThread)
 
     if (islandState.holiday) {
 
+        ttmThread->ttmLayer  = grNewLayer();
         ttmThread->isRunning = 3;
 
         grDx = islandState.xPos;

@@ -116,8 +116,10 @@ void ttmLoadTtm(struct TTtmSlot *ttmSlot, char *ttmName)     // TODO
 
 void ttmInitSlot(struct TTtmSlot *ttmSlot)
 {
-    for (int i=0; i < MAX_BMP_SLOTS; i++)
+    for (int i=0; i < MAX_BMP_SLOTS; i++) {
+        ttmSlot->data          = NULL;
         ttmSlot->numSprites[i] = 0;
+    }
 }
 
 
@@ -126,10 +128,11 @@ void ttmResetSlot(struct TTtmSlot *ttmSlot)
     if (ttmSlot->data != NULL) {
         ttmSlot->data = NULL;
         free(ttmSlot->tags);
+    }
 
-        for (int i=0; i < MAX_BMP_SLOTS; i++)
-            if (ttmSlot->numSprites[i])
-                grReleaseBmp(ttmSlot, i);
+    for (int i=0; i < MAX_BMP_SLOTS; i++) {
+        if (ttmSlot->numSprites[i])
+            grReleaseBmp(ttmSlot, i);
     }
 }
 

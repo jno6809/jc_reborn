@@ -204,10 +204,10 @@ void islandInitHoliday(struct TTtmThread *ttmThread)
         grLoadBmp(ttmSlot, 0, "HOLIDAY.BMP");
 
         switch (islandState.holiday) {
-            case 1: grDrawSprite(ttmThread->ttmLayer, ttmSlot, 410, 298, 0, 0); break;      // Halloween : 29/10 to 31/10
-            case 2: grDrawSprite(ttmThread->ttmLayer, ttmSlot, 333, 286, 1, 0); break;      // St Patrick: 15/03 to 17/03
-            case 3: grDrawSprite(ttmThread->ttmLayer, ttmSlot, 404, 267, 2, 0); break;      // Christmas : 23/12 to 25/12
-            case 4: grDrawSprite(ttmThread->ttmLayer, ttmSlot, 361, 155, 3, 0); break;      // New year  : 29/12 to 01/01
+            case 1: grDrawSprite(ttmThread->ttmLayer, ttmSlot, 410, 298, 0, 0); break;   // Halloween
+            case 2: grDrawSprite(ttmThread->ttmLayer, ttmSlot, 333, 286, 1, 0); break;   // St Patrick
+            case 3: grDrawSprite(ttmThread->ttmLayer, ttmSlot, 404, 267, 2, 0); break;   // Christmas
+            case 4: grDrawSprite(ttmThread->ttmLayer, ttmSlot, 361, 155, 3, 0); break;   // New year
         }
 
         grReleaseBmp(ttmSlot,0);

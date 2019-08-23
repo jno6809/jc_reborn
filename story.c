@@ -92,10 +92,29 @@ static void storyUpdateCurrentDay()
 static void storyCalculateIslandFromDateAndTime()
 {
     // Night ?
-    islandState.night = !(rand() %3);
+    int hour = (getHour() % 8);
+    islandState.night = (hour == 0 || hour == 7);
 
     // Holidays ?
-    islandState.holiday = 4;
+    islandState.holiday = 0;
+    char *currentDate = getMonthAndDay();
+
+    // Halloween : 29/10 to 31/10
+    if (strcmp("1028", currentDate) < 0 && strcmp(currentDate, "1101") < 0)
+        islandState.holiday = 1;
+    else
+    // St Patrick: 15/03 to 17/03
+    if (strcmp("0314", currentDate) < 0 && strcmp(currentDate, "0318") < 0)
+        islandState.holiday = 2;
+    else
+    // Christmas : 23/12 to 25/12
+    if (strcmp("1222", currentDate) < 0 && strcmp(currentDate, "1226") < 0)
+        islandState.holiday = 3;
+    else
+    // New year  : 29/12 to 01/01
+    if (strcmp("1228", currentDate) < 0 || strcmp(currentDate, "0102") < 0)
+        islandState.holiday = 4;
+
 }
 
 

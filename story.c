@@ -31,117 +31,10 @@
 #include "island.h"
 #include "config.h"
 #include "story.h"
-
-
-#define NUM_SCENES    62
-
-#define FINAL         0x01
-#define FIRST         0x02
-#define ISLAND        0x04
-#define LEFT_ISLAND   0x08
-#define VARPOS_OK     0x10
-#define LOWTIDE_OK    0x20
-#define NORAFT        0x40
-#define HOLIDAY_NOK   0x80
-
-#define SPOT_x 0       // TODO - tempo
-#define SPOT_A 0
-#define SPOT_B 1
-#define SPOT_C 2
-#define SPOT_D 3
-#define SPOT_E 4
-#define SPOT_F 5
-
-
-struct TStoryScene {
-    char adsName[13];
-    int  adsTagNo;
-    int  spotStart;
-    int  spotEnd;
-    int  dayNo;
-    int  flags;
-};
+#include "story_data.h"
 
 
 static int storyCurrentDay = 1;
-
-static struct TStoryScene storyScenes[NUM_SCENES] = {
-
-    { "ACTIVITY.ADS",  1,  SPOT_E,      0,  0,  ISLAND | FINAL | VARPOS_OK                                },
-    { "ACTIVITY.ADS", 12,  SPOT_x, SPOT_x,  0,  ISLAND | FINAL                                            },
-    { "ACTIVITY.ADS", 11,       0,      0,  0,  ISLAND | FINAL | FIRST | VARPOS_OK                        },
-    { "ACTIVITY.ADS", 10,  SPOT_D,      0,  0,  ISLAND | FINAL                                            },
-    { "ACTIVITY.ADS",  4,  SPOT_E, SPOT_E,  0,  ISLAND | VARPOS_OK                                        },
-    { "ACTIVITY.ADS",  5,  SPOT_x, SPOT_x,  0,  ISLAND | FINAL                                            },
-    { "ACTIVITY.ADS",  6,  SPOT_D,      0,  0,  ISLAND | FINAL | VARPOS_OK                                },
-    { "ACTIVITY.ADS",  7,  SPOT_D, SPOT_F,  0,  ISLAND | LOWTIDE_OK                                       },
-    { "ACTIVITY.ADS",  8,       0, SPOT_D,  0,  ISLAND | FIRST                                            },
-    { "ACTIVITY.ADS",  9,  SPOT_x,      0,  0,  ISLAND | FINAL | LOWTIDE_OK                               },
-
-    { "BUILDING.ADS",  1,  SPOT_F, SPOT_A,  0,  ISLAND | LOWTIDE_OK                                       },
-    { "BUILDING.ADS",  4,  SPOT_x, SPOT_x,  0,  ISLAND | FINAL                                            },
-    { "BUILDING.ADS",  3,  SPOT_A, SPOT_C,  0,  ISLAND | VARPOS_OK | LOWTIDE_OK                           },
-    { "BUILDING.ADS",  2,  SPOT_F,      0,  0,  ISLAND | FINAL                                            },
-    { "BUILDING.ADS",  5,  SPOT_D, SPOT_D,  0,  ISLAND | VARPOS_OK | LOWTIDE_OK                           },
-//  { "BUILDING.ADS",  9,  SPOT_x, SPOT_x,  0,  ISLAND                                                    },
-    { "BUILDING.ADS",  7,  SPOT_D, SPOT_D,  0,  ISLAND | VARPOS_OK | LOWTIDE_OK                           },
-//  { "BUILDING.ADS",  8,  SPOT_x, SPOT_x,  0,  ISLAND                                                    },
-//  { "BUILDING.ADS",  6,  SPOT_x, SPOT_x,  0,  ISLAND | FINAL                                            },
-
-    { "FISHING.ADS" ,  1,  SPOT_D, SPOT_D,  0,  ISLAND | VARPOS_OK | LOWTIDE_OK                           },
-    { "FISHING.ADS" ,  2,  SPOT_D, SPOT_D,  0,  ISLAND | VARPOS_OK                                        },
-    { "FISHING.ADS" ,  3,  SPOT_x, SPOT_x,  0,  ISLAND | FINAL                                            },
-    { "FISHING.ADS" ,  4,  SPOT_x, SPOT_x,  0,  ISLAND | FINAL | LEFT_ISLAND                              },  // TODO : night NOK ?
-    { "FISHING.ADS" ,  5,  SPOT_E,      0,  0,  ISLAND | FINAL | VARPOS_OK                                },
-    { "FISHING.ADS" ,  6,  SPOT_D,      0,  0,  ISLAND | FINAL                                            },
-    { "FISHING.ADS" ,  7,  SPOT_E, SPOT_E,  0,  ISLAND | LEFT_ISLAND | VARPOS_OK | LOWTIDE_OK             },
-    { "FISHING.ADS" ,  8,  SPOT_E, SPOT_E,  0,  ISLAND | LEFT_ISLAND | VARPOS_OK | LOWTIDE_OK             },
-
-    { "JOHNNY.ADS"  ,  1,       0,      0, 11,  FINAL | FIRST                                             },
-    { "JOHNNY.ADS"  ,  2,  SPOT_E, SPOT_F,  2,  ISLAND | FINAL                                            },  // VARPOS_OK ?
-    { "JOHNNY.ADS"  ,  3,  SPOT_x, SPOT_x,  6,  ISLAND                                                    },  // VARPOS_OK ?
-    { "JOHNNY.ADS"  ,  4,  SPOT_E, SPOT_F,  0,  ISLAND | VARPOS_OK                                        },
-    { "JOHNNY.ADS"  ,  5,  SPOT_E, SPOT_F,  0,  ISLAND | VARPOS_OK                                        },
-    { "JOHNNY.ADS"  ,  6,       0,      0, 10,  FINAL | FIRST                                             },
-
-    { "MARY.ADS"    ,  1,  SPOT_x, SPOT_x,  5,  ISLAND | FINAL                                            },
-    { "MARY.ADS"    ,  3,  SPOT_x, SPOT_x,  4,  ISLAND | FINAL                                            },
-    { "MARY.ADS"    ,  2,  SPOT_x, SPOT_x,  1,  ISLAND | FINAL                                            },
-    { "MARY.ADS"    ,  4,  SPOT_x, SPOT_x,  7,  ISLAND | FINAL                                            },
-    { "MARY.ADS"    ,  5,  SPOT_x, SPOT_x,  8,  ISLAND | LEFT_ISLAND | FINAL | FIRST | NORAFT | VARPOS_OK },
-
-    { "MISCGAG.ADS" ,  1,  SPOT_x, SPOT_x,  0,  ISLAND | FINAL                                            },
-    { "MISCGAG.ADS" ,  2,  SPOT_D,      0,  0,  ISLAND | FINAL                                            },
-
-    { "STAND.ADS"   ,  1,  SPOT_A, SPOT_A,  0,  ISLAND | VARPOS_OK | LOWTIDE_OK                           },
-    { "STAND.ADS"   ,  2,  SPOT_A, SPOT_A,  0,  ISLAND | VARPOS_OK | LOWTIDE_OK                           },
-    { "STAND.ADS"   ,  3,  SPOT_A, SPOT_A,  0,  ISLAND | VARPOS_OK | LOWTIDE_OK                           },
-    { "STAND.ADS"   ,  4,  SPOT_B, SPOT_B,  0,  ISLAND | VARPOS_OK | LOWTIDE_OK                           },
-    { "STAND.ADS"   ,  5,  SPOT_B, SPOT_B,  0,  ISLAND | VARPOS_OK | LOWTIDE_OK                           },
-    { "STAND.ADS"   ,  6,  SPOT_B, SPOT_B,  0,  ISLAND | VARPOS_OK | LOWTIDE_OK                           },
-    { "STAND.ADS"   ,  7,  SPOT_C, SPOT_C,  0,  ISLAND | VARPOS_OK | LOWTIDE_OK                           },
-    { "STAND.ADS"   ,  8,  SPOT_C, SPOT_C,  0,  ISLAND | VARPOS_OK | LOWTIDE_OK                           },
-    { "STAND.ADS"   ,  9,  SPOT_D, SPOT_D,  0,  ISLAND | VARPOS_OK | LOWTIDE_OK                           },
-    { "STAND.ADS"   , 10,  SPOT_D, SPOT_D,  0,  ISLAND | VARPOS_OK | LOWTIDE_OK                           },
-    { "STAND.ADS"   , 11,  SPOT_E, SPOT_E,  0,  ISLAND | VARPOS_OK | LOWTIDE_OK                           },
-    { "STAND.ADS"   , 12,  SPOT_F, SPOT_F,  0,  ISLAND | VARPOS_OK | LOWTIDE_OK                           },
-    { "STAND.ADS"   , 15,  SPOT_A, SPOT_A,  0,  ISLAND | VARPOS_OK | LOWTIDE_OK                           },
-    { "STAND.ADS"   , 16,  SPOT_C, SPOT_C,  0,  ISLAND | VARPOS_OK | LOWTIDE_OK                           },
-
-    { "SUZY.ADS"    ,  1,       0,      0,  3,  FINAL | FIRST                                             },
-    { "SUZY.ADS"    ,  2,       0,      0,  9,  FINAL | FIRST                                             },
-
-    { "VISITOR.ADS" ,  1,  SPOT_A, SPOT_A,  0,  ISLAND | LOWTIDE_OK                                       },  // not VARPOS_OK
-    { "VISITOR.ADS" ,  3,  SPOT_D, SPOT_D,  0,  ISLAND | FINAL | HOLIDAY_NOK                              },  // not VARPOS_OK
-    { "VISITOR.ADS" ,  4,  SPOT_D, SPOT_D,  0,  ISLAND | VARPOS_OK                                        },
-    { "VISITOR.ADS" ,  6,  SPOT_D, SPOT_D,  0,  ISLAND | VARPOS_OK                                        },
-    { "VISITOR.ADS" ,  7,  SPOT_D, SPOT_D,  0,  ISLAND | VARPOS_OK | LOWTIDE_OK                           },
-    { "VISITOR.ADS" ,  5,  SPOT_D, SPOT_D,  0,  ISLAND | FINAL | LEFT_ISLAND                              },
-
-    { "WALKSTUF.ADS",  1,  SPOT_A,      0,  0,  ISLAND | FINAL                                            },  // not VARPOS_OK
-    { "WALKSTUF.ADS",  2,  SPOT_D, SPOT_D,  0,  ISLAND | VARPOS_OK                                        },
-    { "WALKSTUF.ADS",  3,  SPOT_D, SPOT_D,  0,  ISLAND | VARPOS_OK | LOWTIDE_OK                           },
-};
 
 
 static struct TStoryScene *storyPickScene(
@@ -275,6 +168,7 @@ void storyPlay()
     uint16 unwantedFlags = 0;
 
 
+    adsInit();
     adsPlayIntro();
 
     while (1) {
@@ -296,6 +190,9 @@ void storyPlay()
             adsNoIsland();
         }
 
+        int prevSpot = -1;
+        int prevHdg  = -1;
+
         if (!(finalScene->flags & FIRST)) {
 
             wantedFlags = 0;
@@ -307,10 +204,14 @@ void storyPlay()
             if (islandState.xPos || islandState.yPos)
                 wantedFlags |= VARPOS_OK;
 
-            for (int i=0; i < 2; i++) {  // TODO 6 + (rand() % 14)
+            for (int i=0; i < 6 + (rand() % 14); i++) {
 
                 struct TStoryScene *scene = storyPickScene(wantedFlags,
                                                            unwantedFlags);
+
+                if (prevSpot != -1)
+                    adsPlayWalk(prevSpot, prevHdg,
+                        scene->spotStart, scene->hdgStart);
 
                 ttmDx = islandState.xPos
                             + (scene->flags & LEFT_ISLAND ? 272 : 0);
@@ -319,8 +220,13 @@ void storyPlay()
                 adsPlay(scene->adsName, scene->adsTagNo);
 
                 unwantedFlags |= FIRST;
+                prevSpot = scene->spotEnd;
+                prevHdg = scene->hdgEnd;
             }
         }
+
+        if (prevSpot != -1)
+            adsPlayWalk(prevSpot, prevHdg, finalScene->spotStart, finalScene->hdgStart);
 
         if (finalScene->flags & ISLAND) {
             ttmDx = islandState.xPos + (finalScene->flags & LEFT_ISLAND ? 272 : 0);

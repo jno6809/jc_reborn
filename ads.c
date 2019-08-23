@@ -386,17 +386,17 @@ static void adsRandomEnd()
        switch (op->type) {
 
            case OP_ADD_SCENE:
-               debugMsg("RANDOM : chose ADD_SCENE %d %d", op->slot, op->tag);
+               debugMsg("RANDOM: chose ADD_SCENE %d %d", op->slot, op->tag);
                adsAddScene(op->slot, op->tag, op->numPlays);
                break;
 
            case OP_STOP_SCENE:
-               debugMsg("RANDOM : chose STOP_SCENE %d %d", op->slot, op->tag);
+               debugMsg("RANDOM: chose STOP_SCENE %d %d", op->slot, op->tag);
                adsStopSceneByTtmTag(op->slot, op->tag);
                break;
 
            default:
-               debugMsg("RANDOM : chose NOP");
+               debugMsg("RANDOM: chose NOP");
                break;
        }
     }
@@ -854,7 +854,6 @@ void adsPlayBench()  // TODO - tempo
 
 void adsPlayIntro()
 {
-    adsInit();
     grLoadScreen("INTRO.SCR");
     ticksInit();
     graphicsUpdate(NULL, ttmThreads, NULL);
@@ -911,19 +910,55 @@ void adsNoIsland()
 }
 
 
-void adsPlayWalk()
+void adsPlayWalk(int fromSpot, int fromHdg, int toSpot, int toHdg)
 {
-    adsInit();
     adsAddScene(0,0,0);
     grLoadBmp(ttmSlots, 0, "JOHNWALK.BMP");
+
+    grDx = islandState.xPos;
+    grDy = islandState.yPos;
+
+    ttmThreads[0].timer = ttmThreads[0].delay = 6; // 12 ?
     ticksInit();
 
-    walkPlay(ttmThreads, 3);
-    walkPlay(ttmThreads, 7);
-    walkPlay(ttmThreads, 12);
-    walkPlay(ttmThreads, 18);
-    walkPlay(ttmThreads, 25);
-    walkPlay(ttmThreads, 28);
+    walkInit(fromSpot, fromHdg, toSpot, toHdg);
+
+    ttmThreads[0].delay = walkAnimate(&ttmThreads[0], ttmBackgroundThread.ttmSlot);
+
+    while (ttmThreads[0].delay) {
+
+        // Call each thread which timer reaches 0
+        if (!ttmBackgroundThread.timer) {
+            debugMsg("    ------> Animate bg");
+            ttmBackgroundThread.timer = ttmBackgroundThread.delay;
+            islandAnimate(&ttmBackgroundThread);
+        }
+
+        if (!ttmThreads[0].timer) {
+            debugMsg("    ------> Animate walking");
+            ttmThreads[0].timer = ttmThreads[0].delay =
+                walkAnimate(&ttmThreads[0], ttmBackgroundThread.ttmSlot);
+        }
+
+        // Refresh display
+        graphicsUpdate(&ttmBackgroundThread, ttmThreads, &ttmHolidayThread);
+
+        // Determine min timer from the two threads
+        uint16 mini = 300;
+        if (ttmBackgroundThread.timer < ttmThreads[0].timer)
+            mini = ttmBackgroundThread.timer;
+        else
+            mini = ttmThreads[0].timer;
+
+        // Decrease all timers by the shortest one, and wait that amount of time
+        ttmBackgroundThread.timer -= mini;
+        ttmThreads[0].timer       -= mini;
+
+        debugMsg(" ******* WAIT: %d ticks *******\n", mini);
+        ticksWait(mini);
+
+        graphicsUpdate(&ttmBackgroundThread, ttmThreads, &ttmHolidayThread);
+    }
 
     adsStopScene(0);
 }

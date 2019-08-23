@@ -1,9 +1,11 @@
 
-// These data aren't contained in RESOURCE.001, but in the
-// the original SCRANTIC.SCR
+#define NUM_OF_NODES 6
+
+// walkData[]: these data aren't contained in RESOURCE.001,
+// but in the original SCRANTIC.SCR
 // See extract_walk_data.c for the detail
 
-uint16 walkingData[][4] = {
+static uint16 walkData[][4] = {
     { 1, 306, 238, 19 },  // A to E
     { 1, 322, 235, 20 },
     { 1, 322, 233, 21 },
@@ -495,40 +497,37 @@ uint16 walkingData[][4] = {
     { 0,   0,   0,  0 },
 };
 
-uint16 walk_data_bookmarks[] = {
-    0  ,  //  0 - A to E
-    17 ,  //  1 - A to F
-    38 ,  //  2 - A to C
-    68 ,  //  3 - A to B
-    91 ,  //  4 - A turn
-    100,  //  5 - A wait
-    109,  //  6 - B to A
-    133,  //  7 - B to C
-    145,  //  8 - B turn
-    154,  //  9 - B wait
-    163,  // 10 - C to A
-    196,  // 11 - C to B
-    211,  // 12 - C to D
-    224,  // 13 - C to E
-    245,  // 14 - C to F
-    260,  // 15 - C turn
-    269,  // 16 - C wait
-    278,  // 17 - D to C
-    289,  // 18 - D to E
-    302,  // 19 - D to F
-    314,  // 20 - D turn
-    323,  // 21 - D wait
-    332,  // 22 - E to A
-    356,  // 23 - E to C
-    381,  // 24 - E to D
-    394,  // 25 - E to F
-    405,  // 26 - E turn
-    414,  // 27 - E wait
-    423,  // 28 - F to A
-    443,  // 29 - F to C
-    457,  // 30 - F to D
-    463,  // 31 - F to E
-    471,  // 32 - F turn
-    480,  // 33 - F wait
+static int walkDataBookmarks[6][6] = {
+  //     A    B    C    D    E    F
+    {   -1,  68,  38,  -1,   0,  17 },  // A
+    {  109,  -1, 133,  -1,  -1,  -1 },  // B
+    {  163, 196,  -1, 211, 224, 245 },  // C
+    {   -1,  -1, 278,  -1, 289, 302 },  // D
+    {  332,  -1, 356, 381,  -1, 394 },  // E
+    {  423,  -1, 443, 457, 463,  -1 },  // F
+};
+
+static int walkDataBookmarksTurns[NUM_OF_NODES] = {
+    91, 145, 260, 314, 405, 471
+};
+
+static int walkDataStartHeadings[NUM_OF_NODES][NUM_OF_NODES] = {
+  //   A   B   C   D   E   F
+    { -1,  6,  6, -1,  5,  5 },  // A
+    {  3, -1,  5, -1, -1, -1 },  // B
+    {  2,  1, -1,  3,  2,  2 },  // C
+    { -1, -1,  7, -1,  2,  1 },  // D
+    {  1, -1,  7,  6, -1,  7 },  // E
+    {  2, -1,  6,  5,  3, -1 },  // F
+};
+
+static int walkDataEndHeadings[NUM_OF_NODES][NUM_OF_NODES] = {
+  //   A   B   C   D   E   F
+    { -1,  7,  5, -1,  5,  5 },  // A
+    {  3, -1,  5, -1, -1, -1 },  // B
+    {  2,  1, -1,  4,  3,  3 },  // C
+    { -1, -1,  7, -1,  2,  1 },  // D
+    {  1, -1,  6,  6, -1,  7 },  // E
+    {  2, -1,  6,  5,  3, -1 },  // F
 };
 

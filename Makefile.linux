@@ -12,6 +12,7 @@ OBJ =   myscrantic.o \
         dump.o \
         story.o \
         walk.o \
+        calcpath.o \
         ads.o \
         ttm.o \
         island.o \

@@ -22,10 +22,12 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "mytypes.h"
 #include "utils.h"
 #include "graphics.h"
+#include "sound.h"
 #include "ttm.h"
 #include "ads.h"
 #include "island.h"
@@ -236,6 +238,9 @@ void storyPlay()
                             + (scene->flags & LEFT_ISLAND ? 272 : 0);
                 ttmDy = islandState.yPos;
 
+                if (scene->dayNo)
+                    soundPlay(0);
+
                 adsPlay(scene->adsName, scene->adsTagNo);
 
                 unwantedFlags |= FIRST;
@@ -254,6 +259,9 @@ void storyPlay()
         else {
             ttmDx = ttmDy = 0;
         }
+
+        if (finalScene->dayNo)
+            soundPlay(0);
 
         adsPlay(finalScene->adsName, finalScene->adsTagNo);
 

@@ -18,6 +18,7 @@ OBJ =   myscrantic.o \
         island.o \
         bench.o \
         graphics.o \
+        sound.o \
         ticks.o \
         config.o
 

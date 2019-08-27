@@ -30,6 +30,7 @@
 #include "resource.h"
 #include "dump.h"
 #include "graphics.h"
+#include "sound.h"
 #include "ttm.h"
 #include "ads.h"
 #include "story.h"
@@ -61,6 +62,7 @@ static void usage()
         printf("\n");
         printf(" Available options are:\n");
         printf("         fs - play in full screen video mode\n");
+        printf("         nosound - quiet mode\n");
         printf("         island - display the island as background for ADS play\n");
         printf("         debug - print some debug info on stdout\n");
         printf("\n");
@@ -110,11 +112,14 @@ static void parseArgs(int argc, char **argv)
                 argAds = 1;
                 numExpectedArgs = 2;
             }
-            else if (!strcmp(argv[i], "island")) {
-                argIsland = 1;
-            }
             else if (!strcmp(argv[i], "fs")) {
                 argFullScreen = 1;
+            }
+            else if (!strcmp(argv[i], "nosound")) {
+                soundDisabled = 1;
+            }
+            else if (!strcmp(argv[i], "island")) {
+                argIsland = 1;
             }
             else if (!strcmp(argv[i], "debug")) {
                 debugMode = 1;
@@ -144,7 +149,11 @@ int main(int argc, char **argv)
 
     if (argPlayAll) {
         graphicsInit(argFullScreen);
+        soundInit();
+
         storyPlay();
+
+        soundEnd();
         graphicsEnd();
     }
 
@@ -160,13 +169,18 @@ int main(int argc, char **argv)
 
     else if (argTtm) {
         graphicsInit(argFullScreen);
+        soundInit();
+
         adsPlaySingleTtm(args[0]);
+
+        soundEnd();
         graphicsEnd();
     }
 
     else if (argAds) {
 
         graphicsInit(argFullScreen);
+        soundInit();
 
         if (argIsland)
             adsInitIsland();
@@ -175,6 +189,7 @@ int main(int argc, char **argv)
 
         adsPlay(args[0], atoi(args[1]));
 
+        soundEnd();
         graphicsEnd();
     }
 

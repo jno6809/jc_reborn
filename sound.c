@@ -50,9 +50,6 @@ static uint32 currentRemaining;
 
 static void soundCallback(void *userdata, uint8 *stream, int rqdLen)
 {
-    if (!currentRemaining)
-        return;
-
     if (currentRemaining > rqdLen) {
         memcpy(stream, currentPtr, rqdLen);
         currentPtr += rqdLen;

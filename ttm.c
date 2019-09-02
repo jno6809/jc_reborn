@@ -88,7 +88,7 @@ void ttmLoadTtm(struct TTtmSlot *ttmSlot, char *ttmName)     // TODO
 
         uint16 opcode = peekUint16(ttmSlot->data, &offset);
 
-        if (opcode == 0x1111) {
+        if (opcode == 0x1111 || opcode == 0x1101) {
             uint16 arg = peekUint16(ttmSlot->data, &offset);
             ttmSlot->tags[tagNo].id     = arg;
             ttmSlot->tags[tagNo].offset = offset;
@@ -214,11 +214,11 @@ void ttmPlay(struct TTtmThread *ttmThread)     // TODO
                 break;
 
             case 0x1101:
-                debugMsg("    TTM_UNKNOWN_0 %d", args[0]);
+                debugMsg("    :LOCAL_TAG %d", args[0]);
                 break;
 
             case 0x1111:
-                debugMsg("\n    SET_SCENE %d ------------------------", args[0]);
+                debugMsg("\n    :TAG %d ------------------------", args[0]);
                 break;
 
             case 0x1121:

@@ -623,7 +623,7 @@ static void adsPlayChunk(uint8 *data, uint32 dataSize, uint32 offset)
                 break;
 
             default :
-                debugMsg(":TAG_%d\n", opcode);
+                debugMsg(":TAG %d\n", opcode);
                 break;
 
         }

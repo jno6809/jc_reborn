@@ -258,7 +258,7 @@ static void dumpAds(struct TAdsResource *adsResource)
             case 0xf200: fprintf(fout, "GOSUB_TAG"); numArgs=1; break;
             case 0xffff: fprintf(fout, "END"); numArgs=0; break;
             case 0xfff0: fprintf(fout, "END_IF"); numArgs=0; break;
-            default : fprintf(fout, "\n:TAG_%d", opcode); numArgs=0; break;
+            default : fprintf(fout, "\n:TAG %d", opcode); numArgs=0; break;
         }
 
         for (int b=0; b<numArgs; b++)
@@ -359,11 +359,11 @@ static void dumpTtm(struct TTtmResource *ttmResource)
                 break;
 
             case 0x1101:
-                fprintf(fout, "TTM_UNKNOWN_0 %d\n", args[0]);
+                fprintf(fout, ":LOCAL_TAG %d\n", args[0]);
                 break;
 
             case 0x1111:
-                fprintf(fout, "\nSET_SCENE %d\n", args[0]);
+                fprintf(fout, "\n:TAG %d\n", args[0]);
                 break;
 
             case 0x1121:

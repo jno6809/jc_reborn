@@ -63,10 +63,10 @@ static void grReleaseSavedLayer()
 
 static void grPutPixel(SDL_Surface *sfc, uint16 x, uint16 y, uint8 color)
 {
-    // TODO: Implement Cohen-Sutherland or such for grDrawLine, and
-    // another ad hoc algorithm for grDrawCircle
+    // TODO: Implement Cohen-Sutherland clipping algorithm or such for
+    // grDrawLine(), and another ad hoc algorithm for grDrawCircle()
 
-    if (x>0 && y>0 && x<640 && y<480) {
+    if (x>=0 && y>=0 && x<640 && y<480) {
 
         uint8 *pixel = (uint8*) sfc->pixels;
 
@@ -567,6 +567,8 @@ void grFadeOut()
 {
     static int fadeOutType = 0;
     SDL_Surface *sfc = SDL_GetWindowSurface(sdl_window);
+    SDL_Surface *tmpSfc = grNewLayer();
+
 
     grDx = grDy = 0;
 
@@ -574,9 +576,12 @@ void grFadeOut()
 
         // Circle from center
         case 0:
+            // Note: we use tmpSfc to be sure we have a 32bpp surface,
+            // which is needed by grDrawCircle()
             for (int radius=20; radius <= 400; radius += 20) {
-                grDrawCircle(sfc, 320 - radius, 240 - radius,
+                grDrawCircle(tmpSfc, 320 - radius, 240 - radius,
                     radius << 1, radius << 1, 5, 5);
+                SDL_BlitSurface(tmpSfc, NULL, sfc, NULL);
                 SDL_UpdateWindowSurface(sdl_window);
                 ticksWait(1);
             }
@@ -619,6 +624,8 @@ void grFadeOut()
             }
             break;
     }
+
+    grFreeLayer(tmpSfc);
 
     fadeOutType = (fadeOutType + 1) % 5;
 }

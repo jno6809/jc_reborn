@@ -1,7 +1,7 @@
 
 CFLAGS=-I/include/ -Wall --std=c99
 
-LDFLAGS=-L/lib/
+LDFLAGS=-L/lib/ -mwindows
 
 LDLIBS=-lmingw32 -lSDL2main -lSDL2
 

@@ -36,13 +36,13 @@
 #include "story.h"
 
 
-static int  argDump       = 0;
-static int  argBench      = 0;
-static int  argTtm        = 0;
-static int  argAds        = 0;
-static int  argPlayAll    = 0;
-static int  argFullScreen = 0;
-static int  argIsland     = 0;
+static int  argDump     = 0;
+static int  argBench    = 0;
+static int  argTtm      = 0;
+static int  argAds      = 0;
+static int  argPlayAll  = 0;
+static int  argWindowed = 0;
+static int  argIsland   = 0;
 
 static char *args[3];
 static int  numArgs  = 0;
@@ -61,7 +61,7 @@ static void usage()
         printf("         myscrantic [<options>] ads <ADS name> <ADS tag no>\n");
         printf("\n");
         printf(" Available options are:\n");
-        printf("         fs - play in full screen video mode\n");
+        printf("         window - play in windowed mode\n");
         printf("         nosound - quiet mode\n");
         printf("         island - display the island as background for ADS play\n");
         printf("         debug - print some debug info on stdout\n");
@@ -112,8 +112,8 @@ static void parseArgs(int argc, char **argv)
                 argAds = 1;
                 numExpectedArgs = 2;
             }
-            else if (!strcmp(argv[i], "fs")) {
-                argFullScreen = 1;
+            else if (!strcmp(argv[i], "window")) {
+                argWindowed = 1;
             }
             else if (!strcmp(argv[i], "nosound")) {
                 soundDisabled = 1;
@@ -148,7 +148,7 @@ int main(int argc, char **argv)
     parseResourceFiles("RESOURCE.MAP");
 
     if (argPlayAll) {
-        graphicsInit(argFullScreen);
+        graphicsInit(argWindowed);
         soundInit();
 
         storyPlay();
@@ -162,13 +162,13 @@ int main(int argc, char **argv)
     }
 
     else if (argBench) {
-        graphicsInit(argFullScreen);
+        graphicsInit(argWindowed);
         adsPlayBench();
         graphicsEnd();
     }
 
     else if (argTtm) {
-        graphicsInit(argFullScreen);
+        graphicsInit(argWindowed);
         soundInit();
 
         adsPlaySingleTtm(args[0]);
@@ -179,7 +179,7 @@ int main(int argc, char **argv)
 
     else if (argAds) {
 
-        graphicsInit(argFullScreen);
+        graphicsInit(argWindowed);
         soundInit();
 
         if (argIsland)

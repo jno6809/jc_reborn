@@ -107,7 +107,7 @@ void grLoadPalette(struct TPalResource *palResource)
 }
 
 
-void graphicsInit(int fullScreen)
+void graphicsInit(int isWindowed)
 {
     SDL_Init(SDL_INIT_VIDEO);
 
@@ -117,13 +117,13 @@ void graphicsInit(int fullScreen)
         SDL_WINDOWPOS_UNDEFINED,
         640,
         480,
-        (fullScreen ? SDL_WINDOW_FULLSCREEN : 0)
+        (isWindowed ? 0 : SDL_WINDOW_FULLSCREEN)
     );
 
     if (sdl_window == NULL)
         fatalError("Could not create window: %s", SDL_GetError());
 
-    if (fullScreen)
+    if (!isWindowed)
         SDL_ShowCursor(SDL_DISABLE);
 
     SDL_UpdateWindowSurface(sdl_window);

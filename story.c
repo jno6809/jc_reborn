@@ -180,6 +180,14 @@ static void storyCalculateIslandFromScene(struct TStoryScene *scene)
                 break;
         }
     }
+
+
+    // For scene VISITOR.ADS#3 (cargo), never display holiday items - or they
+    // will be drawn over the hull when it fills the screen at the end. This
+    // conforms to the behavior of the original - which, moreover, freezes
+    // the shore animation while we dont
+    if (scene->flags & HOLIDAY_NOK)
+        islandState.holiday = 0;
 }
 
 
@@ -197,9 +205,6 @@ void storyPlay()
         storyUpdateCurrentDay();
         storyCalculateIslandFromDateAndTime();
         unwantedFlags = 0;
-
-        if (islandState.holiday)
-            unwantedFlags |= HOLIDAY_NOK;
 
         struct TStoryScene *finalScene = storyPickScene(FINAL, unwantedFlags);
 

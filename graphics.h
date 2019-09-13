@@ -71,11 +71,13 @@ extern SDL_Surface *grBackgroundSfc;
 
 extern int grDx;
 extern int grDy;
+extern int grWindowed;
 
 
-void graphicsInit(int fullScreen);
+void graphicsInit();
 void graphicsEnd();
 void graphicsRefreshWindow();
+void graphicsToggleFullScreen();
 void graphicsUpdate(struct TTtmThread *ttmBackgroundThread,
                     struct TTtmThread *ttmThreads,
                     struct TTtmThread *ttmHolidayThreads);

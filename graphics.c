@@ -43,7 +43,7 @@ SDL_Surface *grBackgroundSfc = NULL;
 
 int grDx = 0;
 int grDy = 0;
-
+int grWindowed = 0;
 
 
 static void grReleaseScreen()
@@ -107,7 +107,7 @@ void grLoadPalette(struct TPalResource *palResource)
 }
 
 
-void graphicsInit(int isWindowed)
+void graphicsInit()
 {
     SDL_Init(SDL_INIT_VIDEO);
 
@@ -117,13 +117,13 @@ void graphicsInit(int isWindowed)
         SDL_WINDOWPOS_UNDEFINED,
         640,
         480,
-        (isWindowed ? 0 : SDL_WINDOW_FULLSCREEN)
+        (grWindowed ? 0 : SDL_WINDOW_FULLSCREEN)
     );
 
     if (sdl_window == NULL)
         fatalError("Could not create window: %s", SDL_GetError());
 
-    if (!isWindowed)
+    if (!grWindowed)
         SDL_ShowCursor(SDL_DISABLE);
 
     SDL_UpdateWindowSurface(sdl_window);
@@ -140,8 +140,26 @@ void graphicsEnd()
     SDL_Quit();
 }
 
+
 void graphicsRefreshWindow()
 {
+    SDL_UpdateWindowSurface(sdl_window);
+}
+
+
+void graphicsToggleFullScreen()
+{
+    grWindowed = !grWindowed;
+
+    if (grWindowed) {
+        SDL_SetWindowFullscreen(sdl_window, 0);
+        SDL_ShowCursor(SDL_ENABLE);
+    }
+    else {
+        SDL_SetWindowFullscreen(sdl_window, SDL_WINDOW_FULLSCREEN);
+        SDL_ShowCursor(SDL_DISABLE);
+    }
+
     SDL_UpdateWindowSurface(sdl_window);
 }
 
@@ -195,6 +213,7 @@ SDL_Surface *grNewLayer()
 
     return sfc;
 }
+
 
 void grFreeLayer(SDL_Surface *sfc)
 {

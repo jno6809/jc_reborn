@@ -31,22 +31,46 @@
 
 
 static uint32 lastTicks = 0x00ffffff;
+static int paused   = 0;
+static int maxSpeed = 0;
+static int oneFrame = 0;
 
 
-static void ticksPause()
+static void ticksProcessEvents()
 {
-    int stillPaused =1;
     SDL_Event event;
 
-    SDL_Delay(5);
-
-    while (stillPaused && SDL_WaitEvent(&event)) {
+    while (SDL_PollEvent(&event)) {
 
         switch(event.type) {
 
             case SDL_KEYDOWN:
-                if (event.key.keysym.sym == SDLK_p)
-                    stillPaused = 0;
+
+                switch (event.key.keysym.sym) {
+
+                    case SDLK_SPACE:
+                        paused = !paused;
+                        break;
+
+                    case SDLK_m:
+                        maxSpeed = !maxSpeed;
+                        break;
+
+                    case SDLK_RETURN:
+                        if (event.key.keysym.mod & KMOD_LALT) {
+                            graphicsToggleFullScreen();
+                            oneFrame = 1;       // to redraw the window // TODO
+                        }
+                        else {
+                            oneFrame = 1;
+                        }
+                        break;
+
+                    case SDLK_ESCAPE:
+                        graphicsEnd();
+                        exit(255);
+                        break;
+                }
                 break;
 
             case SDL_WINDOWEVENT:
@@ -71,27 +95,14 @@ void ticksInit()
 void ticksWait(uint16 delay)
 {
     delay *= 20;
+    oneFrame = 0;
 
-    while (SDL_GetTicks() - lastTicks < delay) {
+    ticksProcessEvents();
 
-        SDL_Delay(5);  // TODO
-
-        SDL_Event event;
-        while (SDL_PollEvent(&event)) {
-
-            switch(event.type) {
-
-                case SDL_KEYDOWN:
-                    if (event.key.keysym.sym == SDLK_p)
-                        ticksPause();
-                    break;
-
-                case SDL_QUIT:
-                    graphicsEnd();
-                    exit(255);
-                    break;
-            }
-        }
+    while ((paused && !oneFrame)
+            || (!maxSpeed && (SDL_GetTicks() - lastTicks < delay))) {
+        SDL_Delay(5);
+        ticksProcessEvents();
     }
 
     lastTicks = SDL_GetTicks();

@@ -41,7 +41,6 @@ static int  argBench    = 0;
 static int  argTtm      = 0;
 static int  argAds      = 0;
 static int  argPlayAll  = 0;
-static int  argWindowed = 0;
 static int  argIsland   = 0;
 
 static char *args[3];
@@ -61,11 +60,17 @@ static void usage()
         printf("         myscrantic [<options>] ads <ADS name> <ADS tag no>\n");
         printf("\n");
         printf(" Available options are:\n");
-        printf("         window - play in windowed mode\n");
-        printf("         nosound - quiet mode\n");
-        printf("         island - display the island as background for ADS play\n");
-        printf("         debug - print some debug info on stdout\n");
+        printf("         window     - play in windowed mode\n");
+        printf("         nosound    - quiet mode\n");
+        printf("         island     - display the island as background for ADS play\n");
+        printf("         debug      - print some debug info on stdout\n");
         printf("\n");
+        printf(" While-playing hot-keys:\n");
+        printf("         Esc        - Terminate immediately\n");
+        printf("         Alt+Return - Toggle full screen / windowed mode\n");
+        printf("         Space      - Toggle pause / unpause\n");
+        printf("         Return     - When paused, advance one frame\n");
+        printf("         <M>        - toggle max / normal speed\n");
         exit(1);
 }
 
@@ -113,7 +118,7 @@ static void parseArgs(int argc, char **argv)
                 numExpectedArgs = 2;
             }
             else if (!strcmp(argv[i], "window")) {
-                argWindowed = 1;
+                grWindowed = 1;
             }
             else if (!strcmp(argv[i], "nosound")) {
                 soundDisabled = 1;
@@ -148,7 +153,7 @@ int main(int argc, char **argv)
     parseResourceFiles("RESOURCE.MAP");
 
     if (argPlayAll) {
-        graphicsInit(argWindowed);
+        graphicsInit();
         soundInit();
 
         storyPlay();
@@ -162,13 +167,13 @@ int main(int argc, char **argv)
     }
 
     else if (argBench) {
-        graphicsInit(argWindowed);
+        graphicsInit();
         adsPlayBench();
         graphicsEnd();
     }
 
     else if (argTtm) {
-        graphicsInit(argWindowed);
+        graphicsInit();
         soundInit();
 
         adsPlaySingleTtm(args[0]);
@@ -179,7 +184,7 @@ int main(int argc, char **argv)
 
     else if (argAds) {
 
-        graphicsInit(argWindowed);
+        graphicsInit();
         soundInit();
 
         if (argIsland)

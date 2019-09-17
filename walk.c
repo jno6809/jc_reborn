@@ -162,8 +162,10 @@ int walkAnimate(struct TTtmThread *ttmThread, struct TTtmSlot *ttmBgSlot)
             grDrawSprite(sfc, ttmSlot,
                 (*data)[1] - 1, (*data)[2], (*data)[3], 0);
 
-        if (isBehindTree)
-            grDrawSprite(sfc, ttmBgSlot, 442, 148, 13, 0);
+        if (isBehindTree) {
+            grDrawSprite(sfc, ttmBgSlot, 442, 148, 13, 0);  // trunk
+            grDrawSprite(sfc, ttmBgSlot, 365, 122, 12, 0);  // leafs
+        }
 
         if (hasArrived)
             delay = 80;

@@ -461,11 +461,12 @@ void grDrawSpriteFlip(SDL_Surface *sfc, struct TTtmSlot *ttmSlot, sint16 x, sint
     x += grDx; y += grDy;
 
     SDL_Surface *srcSfc = ttmSlot->sprites[imageNo][spriteNo];
+    x += srcSfc->w - 1;
 
     for (int i=0; i < srcSfc->w; i++) {
 
         SDL_Rect src = { i, 0, 1, srcSfc->h };
-        SDL_Rect dest = { x + srcSfc->w - i, y, 0, 0 };
+        SDL_Rect dest = { x - i, y, 0, 0 };
 
         SDL_BlitSurface(srcSfc, &src, sfc, &dest);
     }

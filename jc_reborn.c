@@ -51,13 +51,13 @@ static void usage()
 {
         printf("\n");
         printf(" Usage :\n");
-        printf("         myscrantic\n");
-        printf("         myscrantic help\n");
-        printf("         myscrantic version\n");
-        printf("         myscrantic dump\n");
-        printf("         myscrantic [<options>] bench\n");
-        printf("         myscrantic [<options>] ttm <TTM name>\n");
-        printf("         myscrantic [<options>] ads <ADS name> <ADS tag no>\n");
+        printf("         jc_reborn\n");
+        printf("         jc_reborn help\n");
+        printf("         jc_reborn version\n");
+        printf("         jc_reborn dump\n");
+        printf("         jc_reborn [<options>] bench\n");
+        printf("         jc_reborn [<options>] ttm <TTM name>\n");
+        printf("         jc_reborn [<options>] ads <ADS name> <ADS tag no>\n");
         printf("\n");
         printf(" Available options are:\n");
         printf("         window     - play in windowed mode\n");

@@ -3,9 +3,9 @@ CFLAGS=-Wall -Wpedantic -std=c99
 
 LDLIBS=-lSDL2
 
-EXE =   myscrantic
+EXE =   jc_reborn
 
-OBJ =   myscrantic.o \
+OBJ =   jc_reborn.o \
         utils.o \
         uncompress.o \
         resource.o \

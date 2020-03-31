@@ -5,9 +5,9 @@ LDFLAGS=-L/lib/ -mwindows
 
 LDLIBS=-lmingw32 -lSDL2main -lSDL2
 
-EXE =   myscrantic
+EXE =   jc_reborn
 
-OBJ =   myscrantic.o \
+OBJ =   jc_reborn.o \
         utils.o \
         uncompress.o \
         resource.o \

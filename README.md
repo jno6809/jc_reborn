@@ -10,11 +10,7 @@ It is written in C using the SDL2 library, and was successfully compiled and tes
 For the screen saver to work, you'll need the two data files from the original
 software: `RESOURCE.MAP` and `RESOURCE.001`.
 
-Optionnaly, if you want sounds, you'll need some extra files as well. These can be copied from the github repository of the "JCOS" project (another open source Johnny Castaway engine, see below), and renamed as follows:
-  - `sound1.wav` to `sound10.wav` left unmodified
-  - `sound11.wav` renamed `sound12.wav`
-  - `sound12.wav` to `sound22.wav` renamed `sound14.wav` to `sound24.wav`, respectively
-  - `sound23.wav` renamed `sound0.wav`
+Optionnaly, if you want sounds, you'll need some extra files as well. You can get them [here](https://github.com/nivs1978/Johnny-Castaway-Open-Source/tree/master/JCOS/Resources), from the github repository of the "JCOS" project - another port of the scrantics engine.
 
 As a result, here is what your directory should look like:
 
@@ -74,7 +70,7 @@ What Johnny Reborn brings is:
   - the algorithm for Johnny to transitionnaly walk from scene to scene was implemented. Accuracy is not bad though not perfect.
   - the same can be said about the algorithm which randomly chooses scenes to be played.
   - as well as the algorithm which draws the island at a random place, clouds, etc.
-  - all the work was made by observing the behaviour of the original software and trying to reproduce it as accurately as possible. For a better result from this point, a complete disassembly of the original exe may be necessary - but wasn't done to this point.
+  - all the work was made by observing the behaviour of the original software and trying to reproduce it as accurately as possible. For a better result, a complete disassembly of the original exe may be necessary - but wasn't done to this point.
 
 
 ## Thanks

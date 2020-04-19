@@ -1,0 +1,9 @@
+.gitignore
+Makefile
+jc_reborn
+jc_reborn.exe
+*.o
+RESOURCE.MAP
+RESOURCE.001
+*.wav
+dump/

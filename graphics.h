@@ -72,15 +72,16 @@ extern SDL_Surface *grBackgroundSfc;
 extern int grDx;
 extern int grDy;
 extern int grWindowed;
+extern int grUpdateDelay;
 
 
 void graphicsInit();
 void graphicsEnd();
-void graphicsRefreshWindow();
-void graphicsToggleFullScreen();
-void graphicsUpdate(struct TTtmThread *ttmBackgroundThread,
-                    struct TTtmThread *ttmThreads,
-                    struct TTtmThread *ttmHolidayThreads);
+void grRefreshDisplay();
+void grToggleFullScreen();
+void grUpdateDisplay(struct TTtmThread *ttmBackgroundThread,
+                     struct TTtmThread *ttmThreads,
+                     struct TTtmThread *ttmHolidayThreads);
 
 SDL_Surface *grNewEmptyBackground();
 SDL_Surface *grNewLayer();

@@ -25,7 +25,6 @@
 
 #include "mytypes.h"
 #include "graphics.h"
-#include "ticks.h"
 #include "utils.h"
 #include "calcpath.h"
 #include "walk.h"

@@ -58,7 +58,7 @@ static void ticksProcessEvents()
 
                     case SDLK_RETURN:
                         if (event.key.keysym.mod & KMOD_LALT) {
-                            graphicsToggleFullScreen();
+                            grToggleFullScreen();
                             oneFrame = 1;       // to redraw the window // TODO
                         }
                         else {
@@ -74,7 +74,7 @@ static void ticksProcessEvents()
                 break;
 
             case SDL_WINDOWEVENT:
-                graphicsRefreshWindow();
+                grRefreshDisplay();
                 break;
 
             case SDL_QUIT:

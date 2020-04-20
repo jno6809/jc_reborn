@@ -30,7 +30,6 @@
 #include "utils.h"
 #include "resource.h"
 #include "graphics.h"
-#include "ticks.h"
 #include "ttm.h"
 #include "island.h"
 #include "walk.h"
@@ -416,6 +415,7 @@ void adsInit()    // Init slots and threads for TTM scripts  // TODO : rename
         ttmThreads[i].timer     = 0;
     }
 
+    grUpdateDelay = 0;
     ttmBackgroundThread.isRunning = 0;
     ttmHolidayThread.isRunning    = 0;
     numThreads = 0;
@@ -429,13 +429,12 @@ void adsPlaySingleTtm(char *ttmName)  // TODO - tempo
     ttmLoadTtm(ttmSlots, ttmName);
     adsAddScene(0,0,0);
     ttmThreads[0].ip = 0;
-    ticksInit();
 
     while (ttmThreads[0].ip < ttmSlots[0].dataSize) {
         ttmPlay(ttmThreads);
         ttmThreads[0].isRunning = 1;
-        graphicsUpdate(NULL, ttmThreads, NULL);
-        ticksWait(ttmThreads[0].delay);
+        grUpdateDisplay(NULL, ttmThreads, NULL);
+        grUpdateDelay = ttmThreads[0].delay;
     }
 
     adsStopScene(0);
@@ -674,8 +673,8 @@ void adsPlay(char *adsName, uint16 adsTag)
 
     adsLoad(data, dataSize, adsResource->numTags, adsTag, &offset);
 
-    ticksInit();
     adsStopRequested = 0;
+    grUpdateDelay = 0;
 
     // Play the first ADS chunk of the sequence
     adsPlayChunk(data, dataSize, offset);
@@ -727,7 +726,7 @@ void adsPlay(char *adsName, uint16 adsTag)
         }
 
         // Refresh display
-        graphicsUpdate(&ttmBackgroundThread, ttmThreads, &ttmHolidayThread);
+        grUpdateDisplay(&ttmBackgroundThread, ttmThreads, &ttmHolidayThread);
 
         // Determine min timer through all threads
         uint16 mini = 300;
@@ -755,7 +754,7 @@ void adsPlay(char *adsName, uint16 adsTag)
                 ttmThreads[i].timer -= mini;
 
         debugMsg(" ******* WAIT: %d ticks *******\n", mini);
-        ticksWait(mini);
+        grUpdateDelay = mini;
 
         // Various threads processes
         for (int i=0; i < MAX_TTM_THREADS; i++) {
@@ -821,6 +820,7 @@ void adsPlayBench()  // TODO - tempo
     }
 
     benchInit(ttmSlots);
+    grUpdateDelay = 0;
 
     for (int j=0; j < 3; j++) {
 
@@ -837,7 +837,7 @@ void adsPlayBench()  // TODO - tempo
             for (int i=0; i < numLayers; i++)
                 benchPlay(&ttmThreads[i], i);
 
-            graphicsUpdate(NULL, ttmThreads, NULL);
+            grUpdateDisplay(NULL, ttmThreads, NULL);
 
             counter++;
         }
@@ -855,9 +855,8 @@ void adsPlayBench()  // TODO - tempo
 void adsPlayIntro()
 {
     grLoadScreen("INTRO.SCR");
-    ticksInit();
-    graphicsUpdate(NULL, ttmThreads, NULL);
-    ticksWait(100);
+    grUpdateDelay = 100;
+    grUpdateDisplay(NULL, ttmThreads, NULL);
     grFadeOut();
     ttmResetSlot(&ttmSlots[0]);
 }
@@ -919,7 +918,6 @@ void adsPlayWalk(int fromSpot, int fromHdg, int toSpot, int toHdg)
     grDy = islandState.yPos;
 
     ttmThreads[0].timer = ttmThreads[0].delay = 6; // 12 ?
-    ticksInit();
 
     walkInit(fromSpot, fromHdg, toSpot, toHdg);
 
@@ -941,7 +939,7 @@ void adsPlayWalk(int fromSpot, int fromHdg, int toSpot, int toHdg)
         }
 
         // Refresh display
-        graphicsUpdate(&ttmBackgroundThread, ttmThreads, &ttmHolidayThread);
+        grUpdateDisplay(&ttmBackgroundThread, ttmThreads, &ttmHolidayThread);
 
         // Determine min timer from the two threads
         uint16 mini = 300;
@@ -955,9 +953,7 @@ void adsPlayWalk(int fromSpot, int fromHdg, int toSpot, int toHdg)
         ttmThreads[0].timer       -= mini;
 
         debugMsg(" ******* WAIT: %d ticks *******\n", mini);
-        ticksWait(mini);
-
-        graphicsUpdate(&ttmBackgroundThread, ttmThreads, &ttmHolidayThread);
+        grUpdateDelay = mini;
     }
 
     adsStopScene(0);

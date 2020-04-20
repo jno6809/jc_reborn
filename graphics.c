@@ -44,6 +44,7 @@ SDL_Surface *grBackgroundSfc = NULL;
 int grDx = 0;
 int grDy = 0;
 int grWindowed = 0;
+int grUpdateDelay = 0;
 
 
 static void grReleaseScreen()
@@ -131,6 +132,8 @@ void graphicsInit()
     grLoadPalette(palResources[0]);  // TODO ?
 
     srand(time(NULL));
+
+    ticksInit();
 }
 
 
@@ -141,13 +144,13 @@ void graphicsEnd()
 }
 
 
-void graphicsRefreshWindow()
+void grRefreshDisplay()
 {
     SDL_UpdateWindowSurface(sdl_window);
 }
 
 
-void graphicsToggleFullScreen()
+void grToggleFullScreen()
 {
     grWindowed = !grWindowed;
 
@@ -164,9 +167,9 @@ void graphicsToggleFullScreen()
 }
 
 
-void graphicsUpdate(struct TTtmThread *ttmBackgroundThread,
-                    struct TTtmThread *ttmThreads,
-                    struct TTtmThread *ttmHolidayThread)
+void grUpdateDisplay(struct TTtmThread *ttmBackgroundThread,
+                     struct TTtmThread *ttmThreads,
+                     struct TTtmThread *ttmHolidayThread)
 {
     // Blit the background
     if (grBackgroundSfc != NULL)
@@ -199,7 +202,10 @@ void graphicsUpdate(struct TTtmThread *ttmBackgroundThread,
                             SDL_GetWindowSurface(sdl_window),
                             NULL);
 
+    // Wait for the tick ...
+    ticksWait(grUpdateDelay);
 
+    // ... and refresh the display
     SDL_UpdateWindowSurface(sdl_window);
 }
 
@@ -602,8 +608,8 @@ void grFadeOut()
                 grDrawCircle(tmpSfc, 320 - radius, 240 - radius,
                     radius << 1, radius << 1, 5, 5);
                 SDL_BlitSurface(tmpSfc, NULL, sfc, NULL);
-                SDL_UpdateWindowSurface(sdl_window);
                 ticksWait(1);
+                SDL_UpdateWindowSurface(sdl_window);
             }
             break;
 
@@ -611,8 +617,8 @@ void grFadeOut()
         case 1:
             for (int i=1; i <= 20; i++) {
                 grDrawRect(sfc, 320 - i*16, 240 - i*12, i*32, i*24, 5);
-                SDL_UpdateWindowSurface(sdl_window);
                 ticksWait(1);
+                SDL_UpdateWindowSurface(sdl_window);
             }
             break;
 
@@ -620,8 +626,8 @@ void grFadeOut()
         case 2:
             for (int i=600; i >= 0; i -= 40) {
                 grDrawRect(sfc, i, 0, 40, 480, 5);
-                SDL_UpdateWindowSurface(sdl_window);
                 ticksWait(1);
+                SDL_UpdateWindowSurface(sdl_window);
             }
             break;
 
@@ -629,8 +635,8 @@ void grFadeOut()
         case 3:
             for (int i=0; i < 640; i += 40) {
                 grDrawRect(sfc, i, 0, 40, 480, 5);
-                SDL_UpdateWindowSurface(sdl_window);
                 ticksWait(1);
+                SDL_UpdateWindowSurface(sdl_window);
             }
             break;
 
@@ -639,8 +645,8 @@ void grFadeOut()
             for (int i=0; i < 320; i += 20) {
                 grDrawRect(sfc, 320+i, 0, 20, 480, 5);
                 grDrawRect(sfc, 300-i, 0, 20, 480, 5);
-                SDL_UpdateWindowSurface(sdl_window);
                 ticksWait(1);
+                SDL_UpdateWindowSurface(sdl_window);
             }
             break;
     }

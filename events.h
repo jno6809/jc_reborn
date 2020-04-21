@@ -21,6 +21,8 @@
  *
  */
 
-void ticksInit();
-void ticksWait(uint16 delay);
+extern int evHotKeysEnabled;
+
+void eventsInit();
+void eventsWaitTick(uint16 delay);
 

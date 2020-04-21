@@ -27,7 +27,7 @@
 #include <SDL2/SDL.h>
 #include "mytypes.h"
 #include "graphics.h"
-#include "ticks.h"
+#include "events.h"
 
 
 static uint32 lastTicks = 0x00ffffff;
@@ -35,8 +35,10 @@ static int paused   = 0;
 static int maxSpeed = 0;
 static int oneFrame = 0;
 
+int evHotKeysEnabled = 0;
 
-static void ticksProcessEvents()
+
+static void eventsProcessEvents()
 {
     SDL_Event event;
 
@@ -46,30 +48,39 @@ static void ticksProcessEvents()
 
             case SDL_KEYDOWN:
 
-                switch (event.key.keysym.sym) {
+                if (evHotKeysEnabled) {
 
-                    case SDLK_SPACE:
-                        paused = !paused;
-                        break;
+                    switch (event.key.keysym.sym) {
 
-                    case SDLK_m:
-                        maxSpeed = !maxSpeed;
-                        break;
+                        case SDLK_SPACE:
+                            paused = !paused;
+                            break;
 
-                    case SDLK_RETURN:
-                        if (event.key.keysym.mod & KMOD_LALT) {
-                            grToggleFullScreen();
-                            oneFrame = 1;       // to redraw the window // TODO
-                        }
-                        else {
-                            oneFrame = 1;
-                        }
-                        break;
+                        case SDLK_m:
+                            maxSpeed = !maxSpeed;
+                            break;
 
-                    case SDLK_ESCAPE:
-                        graphicsEnd();
-                        exit(255);
-                        break;
+                        case SDLK_RETURN:
+                            if (event.key.keysym.mod & KMOD_LALT) {
+                                grToggleFullScreen();
+                                oneFrame = 1;   // to redraw the window // TODO
+                            }
+                            else {
+                                oneFrame = 1;
+                            }
+                            break;
+
+                        case SDLK_ESCAPE:
+                            graphicsEnd();
+                            exit(255);
+                            break;
+                    }
+                }
+                else {
+                    // Normal behaviour : no hot keys, the screen saver
+                    // terminates if any key is pressed
+                    graphicsEnd();
+                    exit(255);
                 }
                 break;
 
@@ -86,23 +97,23 @@ static void ticksProcessEvents()
 }
 
 
-void ticksInit()
+void eventsInit()
 {
     lastTicks = SDL_GetTicks();
 }
 
 
-void ticksWait(uint16 delay)
+void eventsWaitTick(uint16 delay)
 {
     delay *= 20;
     oneFrame = 0;
 
-    ticksProcessEvents();
+    eventsProcessEvents();
 
     while ((paused && !oneFrame)
             || (!maxSpeed && (SDL_GetTicks() - lastTicks < delay))) {
         SDL_Delay(5);
-        ticksProcessEvents();
+        eventsProcessEvents();
     }
 
     lastTicks = SDL_GetTicks();

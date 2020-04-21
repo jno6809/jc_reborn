@@ -21,7 +21,7 @@ OBJ =   jc_reborn.o \
         bench.o \
         graphics.o \
         sound.o \
-        ticks.o \
+        events.o \
         config.o
 
 

@@ -30,6 +30,7 @@
 #include "resource.h"
 #include "dump.h"
 #include "graphics.h"
+#include "events.h"
 #include "sound.h"
 #include "ttm.h"
 #include "ads.h"
@@ -64,13 +65,15 @@ static void usage()
         printf("         nosound    - quiet mode\n");
         printf("         island     - display the island as background for ADS play\n");
         printf("         debug      - print some debug info on stdout\n");
+        printf("         hotkeys    - enable hot keys\n");
         printf("\n");
-        printf(" While-playing hot-keys:\n");
+        printf(" While-playing hot-keys (if enabled):\n");
         printf("         Esc        - Terminate immediately\n");
         printf("         Alt+Return - Toggle full screen / windowed mode\n");
         printf("         Space      - Toggle pause / unpause\n");
         printf("         Return     - When paused, advance one frame\n");
         printf("         <M>        - toggle max / normal speed\n");
+        printf("\n");
         exit(1);
 }
 
@@ -90,7 +93,7 @@ static void parseArgs(int argc, char **argv)
 {
     int numExpectedArgs = 0;
 
-    for (int i=0; i < argc; i++) {
+    for (int i=1; i < argc; i++) {
 
         if (numExpectedArgs) {
             args[numArgs++] = argv[i];
@@ -128,6 +131,9 @@ static void parseArgs(int argc, char **argv)
             }
             else if (!strcmp(argv[i], "debug")) {
                 debugMode = 1;
+            }
+            else if (!strcmp(argv[i], "hotkeys")) {
+                evHotKeysEnabled = 1;
             }
         }
     }

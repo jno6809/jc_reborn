@@ -270,7 +270,8 @@ void ttmPlay(struct TTtmThread *ttmThread)     // TODO
                 break;
 
             case 0xA002:
-                debugMsg("    TTM_UNKNOWN_4 %d %d", args[0], args[1]);
+                debugMsg("    DRAW_PIXEL %d %d", args[0], args[1]);
+                grDrawPixel(ttmThread->ttmLayer, args[0], args[1], ttmThread->fgColor);
                 break;
 
             case 0xA054:

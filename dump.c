@@ -407,7 +407,7 @@ static void dumpTtm(struct TTtmResource *ttmResource)
                 break;
 
             case 0xA002:
-                fprintf(fout, "TTM_UNKNOWN_4 %d %d\n", args[0], args[1]);
+                fprintf(fout, "DRAW_PIXEL %d %d\n", args[0], args[1]);
                 break;
 
             case 0xA054:

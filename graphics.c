@@ -280,6 +280,13 @@ void grRestoreZone(SDL_Surface *sfc, uint16 x, uint16 y, uint16 width, uint16 he
 }
 
 
+void grDrawPixel(SDL_Surface *sfc, sint16 x, sint16 y, uint8 color)
+{
+    x += grDx; y += grDy;
+    grPutPixel(sfc, x, y, color);
+}
+
+
 void grDrawLine(SDL_Surface *sfc, sint16 x1, sint16 y1, sint16 x2, sint16 y2, uint8 color)
 {
     x1 += grDx; y1 += grDy;

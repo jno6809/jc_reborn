@@ -59,7 +59,7 @@ static void soundCallback(void *userdata, uint8 *stream, int rqdLen)
         memcpy(stream, currentPtr, currentRemaining);
         memset(stream + currentRemaining, 127, rqdLen - currentRemaining);  // 127 == silence
         currentRemaining = 0;
-        SDL_PauseAudio(1);
+        //SDL_PauseAudio(1);
     }
 }
 
@@ -100,7 +100,8 @@ void soundInit()
         return;
     }
 
-    SDL_PauseAudio(1);
+    currentRemaining = 0;
+    SDL_PauseAudio(0); //SDL_PauseAudio(1);
 }
 
 
@@ -130,13 +131,13 @@ void soundPlay(int nb)
     if (sounds[nb].length) {
 
         SDL_LockAudio();
-        SDL_PauseAudio(1);
+        //SDL_PauseAudio(1);
 
         currentSound     = &sounds[nb];
         currentPtr       = currentSound->data;
         currentRemaining = currentSound->length;
 
-        SDL_PauseAudio(0);
+        //SDL_PauseAudio(0);
         SDL_UnlockAudio();
     }
     else {

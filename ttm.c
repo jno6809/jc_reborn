@@ -248,8 +248,9 @@ void ttmPlay(struct TTtmThread *ttmThread)     // TODO
 
             case 0x2022:
                 debugMsg("    TIMER %d %d", args[0], args[1]);
-                ttmThread->delay = args[0];  // TODO : meaning of each arg ? // !!!! necessary, delay may be == 0
-                ttmThread->timer = args[0];  // TODO : meaning of each arg ?
+                // Really, really not sure about this formula... but things
+                // do work not so bad like that
+                ttmThread->delay = ttmThread->timer = (args[0] + args[1]) / 2;
                 break;
 
             case 0x4004:

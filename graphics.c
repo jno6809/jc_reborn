@@ -39,6 +39,8 @@ static uint8 ttmPalette[16][4];
 
 static SDL_Surface *grSavedZonesLayer = NULL;
 
+static SDL_Rect grScreenOrigin = { 0, 0, 0, 0 };   // TODO
+
 SDL_Surface *grBackgroundSfc = NULL;
 
 int grDx = 0;
@@ -116,13 +118,16 @@ void graphicsInit()
         "Johnny Reborn ...?",
         SDL_WINDOWPOS_UNDEFINED,
         SDL_WINDOWPOS_UNDEFINED,
-        640,
-        480,
+        SCREEN_WIDTH,
+        SCREEN_HEIGHT,
         (grWindowed ? 0 : SDL_WINDOW_FULLSCREEN)
     );
 
     if (sdl_window == NULL)
         fatalError("Could not create window: %s", SDL_GetError());
+
+    grScreenOrigin.x = (SCREEN_WIDTH - 640) / 2;
+    grScreenOrigin.y = (SCREEN_HEIGHT - 480) / 2;
 
     if (!grWindowed)
         SDL_ShowCursor(SDL_DISABLE);
@@ -176,14 +181,14 @@ void grUpdateDisplay(struct TTtmThread *ttmBackgroundThread,
         SDL_BlitSurface(grBackgroundSfc,
                         NULL,
                         SDL_GetWindowSurface(sdl_window),
-                        NULL);
+                        &grScreenOrigin);
 
     // If not NULL, blit the optional layer of saved zones
     if (grSavedZonesLayer != NULL)
         SDL_BlitSurface(grSavedZonesLayer,
                         NULL,
                         SDL_GetWindowSurface(sdl_window),
-                        NULL);
+                        &grScreenOrigin);
 
 
     // Blit successively each thread's layer
@@ -192,7 +197,7 @@ void grUpdateDisplay(struct TTtmThread *ttmBackgroundThread,
             SDL_BlitSurface(ttmThreads[i].ttmLayer,
                             NULL,
                             SDL_GetWindowSurface(sdl_window),
-                            NULL);
+                            &grScreenOrigin);
 
     // Finally, blit the holiday layer
     if (ttmHolidayThread != NULL)
@@ -200,7 +205,7 @@ void grUpdateDisplay(struct TTtmThread *ttmBackgroundThread,
             SDL_BlitSurface(ttmHolidayThread->ttmLayer,
                             NULL,
                             SDL_GetWindowSurface(sdl_window),
-                            NULL);
+                            &grScreenOrigin);
 
     // Wait for the tick ...
     eventsWaitTick(grUpdateDelay);
@@ -614,7 +619,7 @@ void grFadeOut()
             for (int radius=20; radius <= 400; radius += 20) {
                 grDrawCircle(tmpSfc, 320 - radius, 240 - radius,
                     radius << 1, radius << 1, 5, 5);
-                SDL_BlitSurface(tmpSfc, NULL, sfc, NULL);
+                SDL_BlitSurface(tmpSfc, NULL, sfc, &grScreenOrigin);
                 eventsWaitTick(1);
                 SDL_UpdateWindowSurface(sdl_window);
             }
@@ -623,7 +628,7 @@ void grFadeOut()
         // Rectangle from center
         case 1:
             for (int i=1; i <= 20; i++) {
-                grDrawRect(sfc, 320 - i*16, 240 - i*12, i*32, i*24, 5);
+                grDrawRect(sfc, grScreenOrigin.x + 320 - i*16, grScreenOrigin.y + 240 - i*12, i*32, i*24, 5);
                 eventsWaitTick(1);
                 SDL_UpdateWindowSurface(sdl_window);
             }
@@ -632,7 +637,7 @@ void grFadeOut()
         // Right to left
         case 2:
             for (int i=600; i >= 0; i -= 40) {
-                grDrawRect(sfc, i, 0, 40, 480, 5);
+                grDrawRect(sfc, grScreenOrigin.x + i, grScreenOrigin.y, 40, 480, 5);
                 eventsWaitTick(1);
                 SDL_UpdateWindowSurface(sdl_window);
             }
@@ -641,7 +646,7 @@ void grFadeOut()
         // Left to right
         case 3:
             for (int i=0; i < 640; i += 40) {
-                grDrawRect(sfc, i, 0, 40, 480, 5);
+                grDrawRect(sfc, grScreenOrigin.x + i, grScreenOrigin.y, 40, 480, 5);
                 eventsWaitTick(1);
                 SDL_UpdateWindowSurface(sdl_window);
             }
@@ -650,8 +655,8 @@ void grFadeOut()
         // Middle to left and right
         case 4:
             for (int i=0; i < 320; i += 20) {
-                grDrawRect(sfc, 320+i, 0, 20, 480, 5);
-                grDrawRect(sfc, 300-i, 0, 20, 480, 5);
+                grDrawRect(sfc, grScreenOrigin.x + 320+i, grScreenOrigin.y, 20, 480, 5);
+                grDrawRect(sfc, grScreenOrigin.x + 300-i, grScreenOrigin.y, 20, 480, 5);
                 eventsWaitTick(1);
                 SDL_UpdateWindowSurface(sdl_window);
             }

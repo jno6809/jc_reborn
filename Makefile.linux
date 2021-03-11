@@ -1,7 +1,7 @@
 
-CFLAGS=-Wall -Wpedantic -std=c99
+CFLAGS=-Wall -Wpedantic -std=c99  $(shell sdl2-config --cflags)
 
-LDLIBS=-lSDL2
+LDLIBS=-lSDL2 $(shell sdl2-config --libs)
 
 EXE =   jc_reborn
 

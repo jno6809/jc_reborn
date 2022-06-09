@@ -373,8 +373,11 @@ static void parseMapFile(char *fileName)
 static void parseResourceFile(char * filename)
 {
     FILE *f;
+    char filepath[256];
 
-    f = fopen(mapFile.resFileName,"rb");
+    sprintf(filepath, "data/%s", mapFile.resFileName);
+
+    f = fopen(filepath,"rb");
 
     if (f == NULL)
         fatalError("Main resources file not found: %s\n", mapFile.resFileName);

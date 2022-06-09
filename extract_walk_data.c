@@ -31,7 +31,7 @@ int main()
     unsigned short data[4];
     unsigned long a;
 
-    f = fopen("SCRANTIC.SCR","r");
+    f = fopen("data/SCRANTIC.SCR","r");
 
     fseek(f, 0x188ea, SEEK_SET);
 

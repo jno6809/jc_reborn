@@ -1,0 +1,16 @@
+
+CFLAGS=-Wall -Wpedantic -std=c99
+
+EXE =   extract_sound
+
+OBJ =   extract_sound.o \
+        utils.o
+
+
+all: $(EXE)
+
+$(EXE): $(OBJ)
+
+clean:
+	rm -v $(OBJ) $(EXE) 2> /dev/null ; true
+

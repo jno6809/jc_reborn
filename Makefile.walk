@@ -1,0 +1,15 @@
+
+CFLAGS=-Wall -Wpedantic -std=c99
+
+EXE =   extract_walk_data
+
+OBJ =   extract_walk_data.o
+
+
+all: $(EXE)
+
+$(EXE): $(OBJ)
+
+clean:
+	rm -v $(OBJ) $(EXE) 2> /dev/null ; true
+

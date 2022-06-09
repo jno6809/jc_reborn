@@ -33,6 +33,7 @@ int main()
 
     f = fopen("data/SCRANTIC.SCR","r");
 
+    a = 0x188ea;
     fseek(f, 0x188ea, SEEK_SET);
 
     for (int j=0; a <= 0x019456; j++) {

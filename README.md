@@ -19,6 +19,11 @@ Use `extract_sound` to dump the audio files from `SCRANTIC.SCR` file.
 
 ## How to run
 
+> make
+
+> ./jc_reborn window
+
+
 By default, the engine runs full screen and plays the life of Johnny on his island, as the original did.
 
 But, if you're curious about how the engine works, you may type `jc_reborn help` and see the different options available. Feel free to try them and explore the inner workings of Screen Antics !

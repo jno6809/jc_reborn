@@ -81,7 +81,7 @@ void soundInit()
 
         char filename[20];
 
-        sprintf(filename, "sound%d.wav", i);
+        sprintf(filename, "data/sound%d.wav", i);
 
         if (SDL_LoadWAV(filename, &audioSpec, &sounds[i].data, &sounds[i].length) == NULL) {
             sounds[i].data   = NULL;

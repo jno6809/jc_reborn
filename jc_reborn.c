@@ -156,7 +156,7 @@ int main(int argc, char **argv)
     if (argDump)
         debugMode = 1;
 
-    parseResourceFiles("RESOURCE.MAP");
+    parseResourceFiles("data/RESOURCE.MAP");
 
     if (argPlayAll) {
         graphicsInit();

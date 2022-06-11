@@ -24,18 +24,19 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-
+// gcc extract_walk_data.c -o extract_walk_data
 int main()
 {
     FILE *f;
     unsigned short data[4];
     unsigned long a;
 
-    f = fopen("SCRANTIC.SCR","r");
+    f = fopen("data/SCRANTIC.SCR","r");
 
+    a = 0x188ea;
     fseek(f, 0x188ea, SEEK_SET);
 
-    for (int j=0; a != 0x019456; j++) {
+    for (int j=0; a <= 0x019456; j++) {
 
         a = ftell(f);
 

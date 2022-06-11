@@ -1,9 +1,14 @@
 .gitignore
-Makefile
 jc_reborn
 jc_reborn.exe
 *.o
+SCRANTIC.SCR
+SCRANTIC.EXE
 RESOURCE.MAP
 RESOURCE.001
 *.wav
 dump/
+.DS_Store
+extract_walk_data
+extract_sound
+sound*.wav

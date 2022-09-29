@@ -37,16 +37,17 @@
 #include "story.h"
 
 
-static int  argDump     = 0;
-static int  argBench    = 0;
-static int  argTtm      = 0;
-static int  argAds      = 0;
-static int  argPlayAll  = 0;
-static int  argIsland   = 0;
+static int       argDump          = 0;
+static int       argBench         = 0;
+static int       argTtm           = 0;
+static int       argAds           = 0;
+static int       argPlayAll       = 0;
+static int       argIsland        = 0;
+static int       argRun           = 1;
+
 
 static char *args[3];
 static int  numArgs  = 0;
-
 
 static void usage()
 {
@@ -135,6 +136,20 @@ static void parseArgs(int argc, char **argv)
             else if (!strcmp(argv[i], "hotkeys")) {
                 evHotKeysEnabled = 1;
             }
+#ifdef _WIN32
+            else if (argc == 0) {
+                argRun = 0; // Settings window not supported
+            }
+            else if (!strcmp(argv[i], "/c")) {
+                argRun = 0; // Modal settings window not supported
+            }
+            else if (!strcmp(argv[i], "/p")) {
+                argRun = 0; // Preview window not supported
+            }
+            else if (!strcmp(argv[i], "/s")) {
+                argRun = 1; // Run screen saver
+            }
+#endif            
         }
     }
 
@@ -148,10 +163,14 @@ static void parseArgs(int argc, char **argv)
         argPlayAll = 1;
 }
 
-
 int main(int argc, char **argv)
 {
     parseArgs(argc, argv);
+
+    if (!argRun) // Windows screen saver mode, do not run screen saver
+    {
+        return;
+    }
 
     if (argDump)
         debugMode = 1;

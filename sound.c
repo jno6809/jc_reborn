@@ -27,7 +27,7 @@
 #include "mytypes.h"
 #include "utils.h"
 #include "sound.h"
-
+#include "resource.h"
 
 #define NUM_OF_SOUNDS  25
 
@@ -80,14 +80,16 @@ void soundInit()
     for (int i=0; i < NUM_OF_SOUNDS; i++) {
 
         char filename[20];
-
         sprintf(filename, "sound%d.wav", i);
 
-        if (SDL_LoadWAV(filename, &audioSpec, &sounds[i].data, &sounds[i].length) == NULL) {
+        char *resourceFile = concat(resourceDirectory, filename);
+
+        if (SDL_LoadWAV(resourceFile, &audioSpec, &sounds[i].data, &sounds[i].length) == NULL) {
             sounds[i].data   = NULL;
             sounds[i].length = 0;
             debugMsg("SDL_LoadWAV() warning: %s", SDL_GetError());
         }
+        free(resourceFile);
     }
 
     audioSpec.callback = soundCallback;

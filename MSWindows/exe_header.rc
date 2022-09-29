@@ -1,0 +1,23 @@
+1 VERSIONINFO
+FILEVERSION     0,1,0,0
+PRODUCTVERSION  0,1,0,0
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "080904E4"
+    BEGIN
+      VALUE "CompanyName", "jc_reborn"
+      VALUE "FileDescription", "JC Reborn Windows Screen Saver"
+      VALUE "FileVersion", "0.1"
+      VALUE "InternalName", "jc_reborn"
+      VALUE "LegalCopyright", ""
+      VALUE "OriginalFilename", "jc_reborn.exe"
+      VALUE "ProductName", "JC Reborn"
+      VALUE "ProductVersion", "0.1"
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x809, 1252
+  END
+END

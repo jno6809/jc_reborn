@@ -171,3 +171,11 @@ struct TBmpResource *findBmpResource(char *searchString);
 struct TScrResource *findScrResource(char *searchString);
 struct TTtmResource *findTtmResource(char *searchString);
 
+//----------------------------
+//    Constants
+//----------------------------
+#ifdef _WIN32
+    static char *resourceDirectory = "C:\\SIERRA\\SCRANTIC\\"; 
+#else
+    static char *resourceDirectory = ""; 
+#endif

@@ -226,3 +226,11 @@ char *getMonthAndDay()
     return result;
 }
 
+char* concat(char *str1, char *str2)
+{
+    int length = strlen(str1) + strlen(str2) + 1;
+    char* str = safe_malloc(length);
+    strcpy(str,str1);
+    strcat(str,str2);
+    return str;
+}

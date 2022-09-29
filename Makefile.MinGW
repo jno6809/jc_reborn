@@ -1,7 +1,11 @@
+$(shell windres MSWindows\icon.rc -O coff -o icon.res)
+$(shell windres MSWindows\exe_header.rc -O coff -o exe_header.res)
 
-CFLAGS=-I/include/ -Wall --std=c99
+CC = "C:\MinGW\bin\gcc.exe"
 
-LDFLAGS=-L/lib/ -mwindows
+CFLAGS=-IC:\MinGW\include\ -Wall --std=c99 -g3
+
+LDFLAGS=-LC:\MinGW\include\lib\ -mwindows
 
 LDLIBS=-lmingw32 -lSDL2main -lSDL2
 
@@ -22,7 +26,9 @@ OBJ =   jc_reborn.o \
         graphics.o \
         sound.o \
         events.o \
-        config.o
+        config.o \
+		icon.res \
+		exe_header.res
 
 
 all: $(EXE)

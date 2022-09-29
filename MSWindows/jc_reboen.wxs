@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Product Id="*"
+			Language="1033"
+			Manufacturer="Jérémie Guillaume"
+			Name="JC Reborn"
+			UpgradeCode="36c19eaf-0929-46a4-b239-7bc8185605f2"
+			Version="1.0.0.0"
+			Codepage="UTF-8" >
+
+		<Package InstallScope="perMachine" Compressed="yes" />
+
+		<MajorUpgrade DowngradeErrorMessage="A later version of [ProductName] is already installed. Setup will now exit." />
+
+		<MediaTemplate EmbedCab="yes" />
+
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="WindowsFolder" />
+            <Directory Id="SIERRASCRANTIC" FileSource="will_be_overwritten_by_setdirectory">
+				<Component Id="ResourceFiles" Guid="c069467b-289e-4a86-bb01-74ed3e62b0ec">
+                    <File Id="resource_001" Source="RESOURCE.001" />
+                    <File Id="resource_map" Source="RESOURCE.map" />
+					<File Id="sound0_wav" Source="sound0.wav" />
+					<File Id="sound1_wav" Source="sound1.wav" />
+					<File Id="sound2_wav" Source="sound2.wav" />
+					<File Id="sound3_wav" Source="sound3.wav" />
+					<File Id="sound4_wav" Source="sound4.wav" />
+					<File Id="sound5_wav" Source="sound5.wav" />
+					<File Id="sound6_wav" Source="sound6.wav" />
+					<File Id="sound7_wav" Source="sound7.wav" />
+					<File Id="sound8_wav" Source="sound8.wav" />
+					<File Id="sound9_wav" Source="sound9.wav" />
+					<File Id="sound10_wav" Source="sound10.wav" />
+					<File Id="sound12_wav" Source="sound12.wav" />
+					<File Id="sound14_wav" Source="sound14.wav" />
+					<File Id="sound15_wav" Source="sound15.wav" />
+					<File Id="sound16_wav" Source="sound16.wav" />
+					<File Id="sound17_wav" Source="sound17.wav" />
+					<File Id="sound18_wav" Source="sound18.wav" />
+					<File Id="sound19_wav" Source="sound19.wav" />
+					<File Id="sound20_wav" Source="sound20.wav" />
+					<File Id="sound21_wav" Source="sound21.wav" />
+					<File Id="sound22_wav" Source="sound22.wav" />
+					<File Id="sound23_wav" Source="sound23.wav" />
+					<File Id="sound24_wav" Source="sound24.wav" />
+                    <CreateFolder />
+               </Component>
+            </Directory> 
+        </Directory>
+
+        <SetDirectory Id="SIERRASCRANTIC" Value="[WindowsVolume]\SIERRA\SCRANTIC" />
+
+		<Feature Id="JCInstaller">
+			<ComponentRef Id="scr" />
+			<ComponentRef Id="sdl2" />
+            <ComponentRef Id="ResourceFiles" />
+		</Feature>
+
+		<Icon Id="icon_ico" SourceFile="MSWindows\jc_reborn.ico"/>
+
+		<Property Id="ARPPRODUCTICON" Value="icon_ico" />
+
+		<CustomAction Id="ShowScreenSaverSettings" Directory="WindowsFolder" Execute="commit" Impersonate="yes" ExeCommand="cmd.exe /c &quot;control desk.cpl,,@screensaver&quot;" Return="asyncNoWait" />
+
+		<InstallExecuteSequence>
+		  <Custom Action="ShowScreenSaverSettings" After="InstallInitialize" />
+		</InstallExecuteSequence>
+
+	</Product>
+
+	<Fragment>
+		<ComponentGroup Id="ProductComponents" Directory="WindowsFolder">
+			<Component Id="scr" Guid="C0F4841E-092E-4952-962C-891BBB93F410">
+				<File Id="jc_reborn.scr" Source="jc_reborn.scr" KeyPath="yes" />
+			</Component>
+			<Component Id="sdl2" Guid="9D26DA33-34AD-491A-B2F4-C2DB829EE605">
+				<File Id="SDL2.dll" Source="SDL2.dll" KeyPath="yes" />
+			</Component>
+		</ComponentGroup>
+	</Fragment>
+</Wix>

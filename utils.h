@@ -43,4 +43,5 @@ void   hexdump(uint8 *data, uint32 len);
 int    getDayOfYear();
 int    getHour();
 char   *getMonthAndDay();
+char* concat(char *str1, char *str2);
 

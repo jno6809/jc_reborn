@@ -7,3 +7,4 @@ RESOURCE.MAP
 RESOURCE.001
 *.wav
 dump/
+.vscode

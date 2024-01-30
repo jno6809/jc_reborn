@@ -25,6 +25,9 @@
 #include <string.h>
 #include <time.h>
 #include <SDL2/SDL.h>
+#ifdef __EMSCRIPTEN__
+#include <emscripten/html5.h>
+#endif
 
 #include "mytypes.h"
 #include "utils.h"
@@ -122,6 +125,9 @@ void graphicsInit()
         SCREEN_HEIGHT,
         (grWindowed ? 0 : SDL_WINDOW_FULLSCREEN)
     );
+#ifdef __EMSCRIPTEN__
+    emscripten_set_canvas_element_size("#canvas", 640, 480);
+#endif
 
     if (sdl_window == NULL)
         fatalError("Could not create window: %s", SDL_GetError());

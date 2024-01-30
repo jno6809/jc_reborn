@@ -25,6 +25,9 @@
 #include <stdio.h>
 
 #include <SDL2/SDL.h>
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
 #include "mytypes.h"
 #include "graphics.h"
 #include "events.h"
@@ -72,7 +75,12 @@ static void eventsProcessEvents()
 
                         case SDLK_ESCAPE:
                             graphicsEnd();
+#ifdef __EMSCRIPTEN__
+                            emscripten_cancel_main_loop();
+                            emscripten_force_exit(255);
+#else
                             exit(255);
+#endif
                             break;
                     }
                 }
@@ -80,7 +88,12 @@ static void eventsProcessEvents()
                     // Normal behaviour : no hot keys, the screen saver
                     // terminates if any key is pressed
                     graphicsEnd();
+#ifdef __EMSCRIPTEN__
+                    emscripten_cancel_main_loop();
+                    emscripten_force_exit(255);
+#else
                     exit(255);
+#endif
                 }
                 break;
 
@@ -90,7 +103,12 @@ static void eventsProcessEvents()
 
             case SDL_QUIT:
                 graphicsEnd();
+#ifdef __EMSCRIPTEN__
+                emscripten_cancel_main_loop();
+                emscripten_force_exit(255);
+#else
                 exit(255);
+#endif
                 break;
         }
     }
@@ -112,7 +130,11 @@ void eventsWaitTick(uint16 delay)
 
     while ((paused && !oneFrame)
             || (!maxSpeed && (SDL_GetTicks() - lastTicks < delay))) {
+#ifdef __EMSCRIPTEN__
+        emscripten_sleep(5);
+#else
         SDL_Delay(5);
+#endif
         eventsProcessEvents();
     }
 

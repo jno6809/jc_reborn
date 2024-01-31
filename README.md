@@ -2,7 +2,7 @@
 
 Johnny Reborn is an open source engine for the classic Johnny Castaway screen saver, developed by Dynamix for Windows 3.x and published by Sierra, back in 1992.
 
-It is written in C using the SDL2 library, and was successfully compiled and tested on Linux as well as Windows (MinGW), both 32 and 64 bits.
+It is written in C using the SDL2 library, and was successfully compiled and tested on Linux, on MacOSX, on Chrome and FireFox via Emscripten, as well as Windows (MinGW), both 32 and 64 bits.
 
 
 ## How to install

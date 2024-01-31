@@ -276,4 +276,3 @@ void storyPlay()
             adsReleaseIsland();
     }
 }
-

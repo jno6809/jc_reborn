@@ -76,7 +76,6 @@ static void eventsProcessEvents()
                         case SDLK_ESCAPE:
                             graphicsEnd();
 #ifdef __EMSCRIPTEN__
-                            emscripten_cancel_main_loop();
                             emscripten_force_exit(255);
 #else
                             exit(255);
@@ -89,7 +88,6 @@ static void eventsProcessEvents()
                     // terminates if any key is pressed
                     graphicsEnd();
 #ifdef __EMSCRIPTEN__
-                    emscripten_cancel_main_loop();
                     emscripten_force_exit(255);
 #else
                     exit(255);
@@ -104,7 +102,6 @@ static void eventsProcessEvents()
             case SDL_QUIT:
                 graphicsEnd();
 #ifdef __EMSCRIPTEN__
-                emscripten_cancel_main_loop();
                 emscripten_force_exit(255);
 #else
                 exit(255);

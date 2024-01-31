@@ -23,9 +23,6 @@
 
 #include <stdlib.h>
 #include <string.h>
-#ifdef __EMSCRIPTEN__
-#include <emscripten.h>
-#endif
 
 #include "mytypes.h"
 #include "utils.h"
@@ -194,102 +191,88 @@ static void storyCalculateIslandFromScene(struct TStoryScene *scene)
 }
 
 
-struct MainLoopData {
-    uint16 wantedFlags;
-    uint16 unwantedFlags;
-};
-
-void mainLoop(void *voidData)
-{
-    struct MainLoopData *data = (struct MainLoopData *)voidData;
-    storyUpdateCurrentDay();
-    storyCalculateIslandFromDateAndTime();
-    data->unwantedFlags = 0;
-
-    struct TStoryScene *finalScene = storyPickScene(FINAL, data->unwantedFlags);
-
-    if (finalScene->flags & ISLAND) {
-        storyCalculateIslandFromScene(finalScene);
-        adsInitIsland();
-    }
-    else {
-        adsNoIsland();
-    }
-
-    int prevSpot = -1;
-    int prevHdg  = -1;
-
-    if (!(finalScene->flags & FIRST)) {
-
-        data->wantedFlags = 0;
-        data->unwantedFlags |= FINAL;
-
-        if (islandState.lowTide)
-            data->wantedFlags |= LOWTIDE_OK;
-
-        if (islandState.xPos || islandState.yPos)
-            data->wantedFlags |= VARPOS_OK;
-
-        for (int i=0; i < 6 + (rand() % 14); i++) {
-
-            struct TStoryScene *scene = storyPickScene(data->wantedFlags,
-                                                        data->unwantedFlags);
-
-            if (prevSpot != -1)
-                adsPlayWalk(prevSpot, prevHdg,
-                    scene->spotStart, scene->hdgStart);
-
-            ttmDx = islandState.xPos
-                        + (scene->flags & LEFT_ISLAND ? 272 : 0);
-            ttmDy = islandState.yPos;
-
-            if (scene->dayNo)
-                soundPlay(0);
-
-            adsPlay(scene->adsName, scene->adsTagNo);
-
-            data->unwantedFlags |= FIRST;
-            prevSpot = scene->spotEnd;
-            prevHdg = scene->hdgEnd;
-        }
-    }
-
-    if (prevSpot != -1)
-        adsPlayWalk(prevSpot, prevHdg, finalScene->spotStart, finalScene->hdgStart);
-
-    if (finalScene->flags & ISLAND) {
-        ttmDx = islandState.xPos + (finalScene->flags & LEFT_ISLAND ? 272 : 0);
-        ttmDy = islandState.yPos;
-    }
-    else {
-        ttmDx = ttmDy = 0;
-    }
-
-    if (finalScene->dayNo)
-        soundPlay(0);
-
-    adsPlay(finalScene->adsName, finalScene->adsTagNo);
-
-    grFadeOut();
-
-    if (finalScene->flags & ISLAND)
-        adsReleaseIsland();
-}
-
-
 void storyPlay()
 {
-    struct MainLoopData data = { 0 };
+    uint16 wantedFlags   = 0;
+    uint16 unwantedFlags = 0;
+
 
     adsInit();
     adsPlayIntro();
 
-#ifdef __EMSCRIPTEN__
-    emscripten_set_main_loop_arg(mainLoop, &data, 0, 1);
-#else
     while (1) {
-        mainLoop(&data);
-    }
-#endif
-}
 
+        storyUpdateCurrentDay();
+        storyCalculateIslandFromDateAndTime();
+        unwantedFlags = 0;
+
+        struct TStoryScene *finalScene = storyPickScene(FINAL, unwantedFlags);
+
+        if (finalScene->flags & ISLAND) {
+            storyCalculateIslandFromScene(finalScene);
+            adsInitIsland();
+        }
+        else {
+            adsNoIsland();
+        }
+
+        int prevSpot = -1;
+        int prevHdg  = -1;
+
+        if (!(finalScene->flags & FIRST)) {
+
+            wantedFlags = 0;
+            unwantedFlags |= FINAL;
+
+            if (islandState.lowTide)
+                wantedFlags |= LOWTIDE_OK;
+
+            if (islandState.xPos || islandState.yPos)
+                wantedFlags |= VARPOS_OK;
+
+            for (int i=0; i < 6 + (rand() % 14); i++) {
+
+                struct TStoryScene *scene = storyPickScene(wantedFlags,
+                                                           unwantedFlags);
+
+                if (prevSpot != -1)
+                    adsPlayWalk(prevSpot, prevHdg,
+                        scene->spotStart, scene->hdgStart);
+
+                ttmDx = islandState.xPos
+                            + (scene->flags & LEFT_ISLAND ? 272 : 0);
+                ttmDy = islandState.yPos;
+
+                if (scene->dayNo)
+                    soundPlay(0);
+
+                adsPlay(scene->adsName, scene->adsTagNo);
+
+                unwantedFlags |= FIRST;
+                prevSpot = scene->spotEnd;
+                prevHdg = scene->hdgEnd;
+            }
+        }
+
+        if (prevSpot != -1)
+            adsPlayWalk(prevSpot, prevHdg, finalScene->spotStart, finalScene->hdgStart);
+
+        if (finalScene->flags & ISLAND) {
+            ttmDx = islandState.xPos + (finalScene->flags & LEFT_ISLAND ? 272 : 0);
+            ttmDy = islandState.yPos;
+        }
+        else {
+            ttmDx = ttmDy = 0;
+        }
+
+        if (finalScene->dayNo)
+            soundPlay(0);
+
+        adsPlay(finalScene->adsName, finalScene->adsTagNo);
+
+        grFadeOut();
+
+        if (finalScene->flags & ISLAND)
+            adsReleaseIsland();
+    }
+}

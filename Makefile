@@ -6,7 +6,7 @@ BASE_EXE = jc_reborn
 
 ifdef EMSCRIPTEN
 EXE =   $(BASE_EXE).js
-ASSET_DIR=./assets@/
+ASSET_DIR=./data@/
 CFLAGS+=-sUSE_SDL=2 -Os
 LDFLAGS+=--embed-file $(ASSET_DIR) -sASYNCIFY -sALLOW_MEMORY_GROWTH -sSTANDALONE_WASM=0 -sEXIT_RUNTIME
 else
@@ -39,4 +39,3 @@ endif
 
 clean:
 	rm -v $(OBJ) $(BASE_EXE) $(BASE_EXE).js $(BASE_EXE).wasm 2> /dev/null ; true
-

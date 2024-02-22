@@ -12,6 +12,8 @@ software: `RESOURCE.MAP`, `RESOURCE.001` and `SCRANTIC.SCR` and save it under a 
 
 Use `extract_sound` to dump the audio files from `SCRANTIC.SCR` file.
 
+> cd tools
+
 > make -f Makefile.sound
 
 > ./extract_sound

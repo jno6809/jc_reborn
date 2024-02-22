@@ -22,6 +22,10 @@
  */
 
 #include <SDL2/SDL.h>
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+EM_JS_DEPS(sdlaudio, "$autoResumeAudioContext,$dynCall")
+#endif
 #include <string.h>
 
 #include "mytypes.h"

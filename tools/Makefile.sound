@@ -4,7 +4,7 @@ CFLAGS=-Wall -Wpedantic -std=c99
 EXE =   extract_sound
 
 OBJ =   extract_sound.o \
-        utils.o
+        ../utils.o
 
 
 all: $(EXE)

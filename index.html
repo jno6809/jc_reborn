@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>Johnny Castaway Reborn</title>
+    </head>
+    <body>
+        <style>
+            html, body {
+                height: 100%;
+            }
+
+            html {
+                display: table;
+                margin: auto;
+            }
+
+            body {
+                background-color: black;
+                display: table-cell;
+                vertical-align: middle;
+            }
+        </style>
+        <canvas id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+        <script type='text/javascript'>
+            var Module = {
+                canvas: (function() { return document.getElementById('canvas'); })()
+            };
+            // Work-around chromium autoplay policy
+            // https://github.com/emscripten-core/emscripten/issues/6511
+            function resumeAudio(e) {
+            if (typeof Module === 'undefined'
+                || typeof Module.SDL2 == 'undefined'
+                || typeof Module.SDL2.audioContext == 'undefined')
+                return;
+            if (Module.SDL2.audioContext.state == 'suspended') {
+                Module.SDL2.audioContext.resume();
+            }
+            if (Module.SDL2.audioContext.state == 'running') {
+                document.getElementById('canvas').removeEventListener('click', resumeAudio);
+                document.removeEventListener('keydown', resumeAudio);
+            }
+            }
+            document.getElementById('canvas').addEventListener('click', resumeAudio);
+            document.addEventListener('keydown', resumeAudio);
+        </script>
+        <script src="jc_reborn.js"></script>
+    </body>
+</html>

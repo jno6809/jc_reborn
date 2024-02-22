@@ -12,3 +12,5 @@ dump/
 extract_walk_data
 extract_sound
 sound*.wav
+*.js
+*.wasm

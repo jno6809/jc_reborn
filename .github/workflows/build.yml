@@ -1,0 +1,99 @@
+name: Johnny Castaway Cross-Platform Workflow
+on:
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
+
+jobs:
+    mac-intel:
+        name: macOS Intel Build
+        runs-on: macos-latest
+        steps:
+            - uses: actions/checkout@v4
+            
+            - name: Install SDL2
+              run:  brew install sdl2
+            
+            - name: Build
+              run: make
+
+            - name: Upload Artifact
+              uses: actions/upload-artifact@v2
+              with:
+                  name: jc-reborn-mac-intel
+                  path: build/jc-reborn-mac-intel
+
+    mac-m1:
+        name: macOS M1 Build
+        runs-on: macos-14
+        steps:
+            - uses: actions/checkout@v4
+            
+            - name: Install SDL2
+              run:  brew install sdl2
+            
+            - name: Build
+              run: make
+
+            - name: Upload Artifact
+              uses: actions/upload-artifact@v2
+              with:
+                  name: jc-reborn-mac-m1
+                  path: build/jc-reborn-mac-m1
+    
+    linux:
+        name: Linux Build
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            
+            - name: Install SDL2
+              run: sudo apt-get install libsdl2-dev
+            
+            - name: Build
+              run: make
+
+            - name: Upload Artifact
+              uses: actions/upload-artifact@v2
+              with:
+                  name: jc-reborn-linux
+                  path: build/jc-reborn-mac-linux
+            
+    windows:
+        name: Windows Build
+        runs-on: windows-latest
+        steps:
+            - uses: actions/checkout@v4
+            
+            - name: Install SDL2
+              run: choco install sdl2
+            
+            - name: Build
+              run: make
+
+            - name: Upload Artifact
+              uses: actions/upload-artifact@v2
+              with:
+                  name: jc-reborn-windows
+                  path: build/jc-reborn-windows.exe
+
+    web:
+        name: Web Build
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            
+            - name: Install Emscripten
+              run: |
+                sudo apt-get install emscripten
+                source /emsdk/emsdk_env.sh
+            
+            - name: Build
+              run: EMSCRIPTEN=1 emmake make
+
+            - name: Upload Artifact
+              uses: actions/upload-artifact@v2
+              with:
+                  name: jc-reborn-web
+                  path: build/jc-reborn-web.html

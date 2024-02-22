@@ -14,3 +14,4 @@ extract_sound
 sound*.wav
 *.js
 *.wasm
+build/
